@@ -4,10 +4,10 @@
   "description": "A social media site to make new friends",
   "main": "index.js",
   "scripts": {
-    "start-backend": "cd backend && node server.js",
     "start-frontend": "cd frontend && next start",
     "dev-backend": "cd backend && nodemon server.js",
-    "dev-frontend": "cd frontend && next dev"
+    "dev-frontend": "cd frontend && next dev",
+    "start-backend": "node Backend/server.js"
   },
   "author": "",
   "license": "ISC",
