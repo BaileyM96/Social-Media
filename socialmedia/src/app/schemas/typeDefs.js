@@ -17,8 +17,14 @@ type Query {
     user(id: ID!): User
 }
 
+type Auth {
+    token: String!
+    user: User
+}
+
 type Mutation {
     createUser(input: CreateUserInput!): User!
+    login(email: String!, password: String!): Auth!
 }
 `;
 
