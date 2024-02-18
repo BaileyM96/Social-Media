@@ -72,13 +72,26 @@ const resolvers = {
         },
 
         acceptFriendRequest: async (_, { requestId }) => {
-          //FIRST Define user so we can access their friends list.
-          const user = await User.findById({ user: id });
-          //THEN define pending friend requests so we can find it and accept it later on
-          const receivingFriendRequest = await FriendRequest.findById(requestId);
-          //THEN we need to accept the request and change the request status from PENDING to ACCEPTED
-          const accept = receivingFriendRequest({ status: 'ACCEPTED' });
-          //THEN PUSH the friend to their friend list.
+         //DEFINE friendRequests and find it by its id from the User schema
+         const pendingRequests = await FriendRequest.findById(requestId);
+
+         if (!pendingRequests) {
+          throw new Error('No pending requests have been found!')
+         }
+
+         if (pendingRequests.status === 'ACCEPTED') {
+          throw new Error('You have already accepted the request!');
+         }
+       
+         pendingRequests.status = 'ACCEPTED';
+         await pendingRequests.save();
+
+         console.log(`Adding Friend: ${pendingRequests.to} to user ${pendingRequests.from}`)
+         await User.findByIdAndUpdate(pendingRequests.from, { $addToSet: { friends: pendingRequests.to }});
+         console.log(`Adding Friend: ${pendingRequests.from} from user ${pendingRequests.to}`)
+         await User.findByIdAndUpdate(pendingRequests.to, { $addToSet: { friends: pendingRequests.from }})
+         
+         return pendingRequests
         },
 
         rejectFriendRequest: async () => {
