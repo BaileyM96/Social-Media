@@ -1,5 +1,5 @@
 const { User, FriendRequest } = require('../models');
-const { AuthenticationError } = require('apollo-server-express');
+const { AuthenticationError, UserInputError, ApolloError } = require('apollo-server-express');
 const bcrypt = require('bcryptjs');
 const { signToken } = require('../utils/auth');
 const jwt = require('jsonwebtoken')
@@ -7,9 +7,10 @@ const jwt = require('jsonwebtoken')
 const resolvers = {
     Query: {
       // Resolver for 'user' query
-      user: async (_, args, context) => {
+      user: async (_, { email }, context) => {
         // Fetch the user based on the ID from your data source (e.g., database)
-        const user = await context.db.findUserById(args.id);
+        const user = await User.findOne({ email: email }).populate('sentFriendRequest');
+        console.log('QUERY USER', user);
         return user;
       },
     },
@@ -18,14 +19,12 @@ const resolvers = {
         createUser: async(_, { input }) => {
           const { username, email, password } = input;
           const user = await User.create({ email, password, username });
-          console.log(user);
           const token = signToken({ email: user.email, id: user.id, username: user.username });
           return { token, user };
         },
 
         login: async (_, { email, password }) => {
           const user = await User.findOne({ email });
-          console.log(user)
           if (!user) {
             throw new AuthenticationError('No user found with that username!')
           }
@@ -37,25 +36,49 @@ const resolvers = {
           return { token, user}
         },
 
-        sendFriendRequest: async (_, { fromUserId, toUserId }, context) => {
-          //CREATE fromUser
-          //CREATE toUser
-            //User.findbyId(fromUserId) etc
+        sendFriendRequest: async (_, { fromUserName, toUserName }) => {
+          const fromUser = await User.findOne({ username: fromUserName });
+          const toUser = await User.findOne({ username: toUserName });
 
-          //SET IF conditions to show if toUser exsists
-            //IF NO toUser throw new error the user does not exist
+          if (!toUser || !fromUser) {
+            throw new UserInputError('You must provide both from and to username')
+          }
+
+          if (!toUser) {
+            throw new UserInputError('That user does not exsist')
+          }
           
-          //SET IF condition to not allow a user to send themself a friend request
-            //IF fromUser is the same as toUser throw error cant send yourself a request
+          if (fromUser === toUser) {
+            throw new AuthenticationError('You cannot send yourself a friend request!')
+          }
 
-          //CHECK to see if the user has already sent a friend request and is PENDING
-          //CHECK IF the users are already friends
+          const newFriendRequest = await FriendRequest.create({
+            from: fromUser.id,
+            to: toUser.id,
+            status: 'PENDING',
+          });
+          // console.log('fromUser', fromUser);
+          // console.log('toUser', toUser);
+          await User.findByIdAndUpdate(toUser.id, {
+            $push: { receivedFriendRequest: newFriendRequest.id }
+          });
 
-          //CREATE FriendRequest Logic here
+          await User.findByIdAndUpdate(fromUser.id, {
+            $push: { sentFriendRequest: newFriendRequest.id }
+          });
+  
+          // console.log('new friend request', newFriendRequest)
+          return newFriendRequest;
         },
 
-        acceptFriendRequest: async () => {
-
+        acceptFriendRequest: async (_, { requestId }) => {
+          //FIRST Define user so we can access their friends list.
+          const user = await User.findById({ user: id });
+          //THEN define pending friend requests so we can find it and accept it later on
+          const receivingFriendRequest = await FriendRequest.findById(requestId);
+          //THEN we need to accept the request and change the request status from PENDING to ACCEPTED
+          const accept = receivingFriendRequest({ status: 'ACCEPTED' });
+          //THEN PUSH the friend to their friend list.
         },
 
         rejectFriendRequest: async () => {

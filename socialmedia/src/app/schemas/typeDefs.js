@@ -1,5 +1,6 @@
 const { gql } = require('apollo-server-express');
 
+
 const typeDefs = gql`
 type User {
     id: ID!
@@ -30,7 +31,7 @@ input CreateUserInput {
 }
 
 type Query {
-    user(id: ID!): User
+    user(email: String!): User
 }
 
 type Auth {
@@ -41,9 +42,9 @@ type Auth {
 type Mutation {
     createUser(input: CreateUserInput!): User!
     login(email: String!, password: String!): Auth!
-    sendFriendRequest(fromUserId: ID!, toUserId: ID!) FriendRequest!
-    acceptFriendRequest(requestId: ID!) FriendRequest!
-    rejectFriendRequest(requestId: ID!) FriendRequest!
+    sendFriendRequest(fromUserName: String!, toUserName: String!): FriendRequest!
+    acceptFriendRequest(requestId: ID!): FriendRequest!
+    rejectFriendRequest(requestId: ID!): FriendRequest!
 }
 `;
 

@@ -8,8 +8,6 @@ const server = new ApolloServer({
     typeDefs,
     resolvers,
 });
-console.log('resolveres', resolvers);
-console.log('typeDefs', typeDefs);
 
 const handler  = startServerAndCreateNextHandler(server);
 
