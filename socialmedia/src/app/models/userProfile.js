@@ -1,6 +1,7 @@
-const { Schema, model } = require('mongoose');
+const { Schema } = require('mongoose');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const FriendRequest = require('./friendRequest');
 
 const userSchema = new Schema({
     email: {
@@ -16,7 +17,19 @@ const userSchema = new Schema({
         type: String,
         required: true,
         unique: true,
-    }
+    },
+    friends: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    }],
+    sentFriendRequest: [{
+        type: Schema.Types.ObjectId,
+        ref: 'FriendRequest',
+    }],
+    receivedFriendRequest: [{
+        type: Schema.Types.ObjectId,
+        ref: 'FriendRequest',
+    }],
 }, {
     timestamps: true,
 });

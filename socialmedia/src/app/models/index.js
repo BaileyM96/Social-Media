@@ -1,3 +1,4 @@
 const User = require('./userProfile');
+const FriendRequest = require('./friendRequest');
 
-module.exports = { User };
+module.exports = { User, FriendRequest };

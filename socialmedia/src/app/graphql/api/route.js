@@ -3,13 +3,13 @@ const db = require('../../lib/mongodb');
 
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
 import { ApolloServer } from '@apollo/server';
+const { Auth } = require('../../utils/auth');
 
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    context: Auth
 });
-console.log('resolveres', resolvers);
-console.log('typeDefs', typeDefs);
 
 const handler  = startServerAndCreateNextHandler(server);
 

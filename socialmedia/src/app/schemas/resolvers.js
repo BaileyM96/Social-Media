@@ -1,15 +1,14 @@
-const { User } = require('../models');
-const { AuthenticationError } = require('apollo-server-express');
+const { User, FriendRequest } = require('../models');
+const { AuthenticationError, UserInputError, ApolloError } = require('apollo-server-express');
 const bcrypt = require('bcryptjs');
 const { signToken } = require('../utils/auth');
 const jwt = require('jsonwebtoken')
 
 const resolvers = {
     Query: {
-      // Resolver for 'user' query
-      user: async (_, args, context) => {
-        // Fetch the user based on the ID from your data source (e.g., database)
-        const user = await context.db.findUserById(args.id);
+      user: async (_, { email }, context) => {
+  
+        const user = await User.findOne({ email: email }).populate('sentFriendRequest');
         return user;
       },
     },
@@ -18,13 +17,12 @@ const resolvers = {
         createUser: async(_, { input }) => {
           const { username, email, password } = input;
           const user = await User.create({ email, password, username });
-          console.log(user);
           const token = signToken({ email: user.email, id: user.id, username: user.username });
           return { token, user };
         },
+
         login: async (_, { email, password }) => {
           const user = await User.findOne({ email });
-          console.log(user)
           if (!user) {
             throw new AuthenticationError('No user found with that username!')
           }
@@ -34,6 +32,72 @@ const resolvers = {
           }
           const token = jwt.sign({ email: user.email, id: user.id, username: user.username }, process.env.JWT_SECRET);
           return { token, user}
+        },
+
+        sendFriendRequest: async (_, { fromUserName, toUserName }) => { 
+          const fromUser = await User.findOne({ username: fromUserName });
+          const toUser = await User.findOne({ username: toUserName });
+
+          if (!toUser || !fromUser) {
+            throw new UserInputError('You must provide both from and to username')
+          }
+
+          if (!toUser) {
+            throw new UserInputError('That user does not exsist')
+          }
+          
+          if (fromUser === toUser) {
+            throw new AuthenticationError('You cannot send yourself a friend request!')
+          }
+
+          const newFriendRequest = await FriendRequest.create({
+            from: fromUser.id,
+            to: toUser.id,
+            status: 'PENDING',
+          });
+        
+          await User.findByIdAndUpdate(toUser.id, {
+            $push: { receivedFriendRequest: newFriendRequest.id }
+          });
+
+          await User.findByIdAndUpdate(fromUser.id, {
+            $push: { sentFriendRequest: newFriendRequest.id }
+          });
+  
+          return newFriendRequest;
+        },
+
+        acceptFriendRequest: async (_, { requestId }) => {
+         const pendingRequests = await FriendRequest.findById(requestId);
+
+         if (!pendingRequests) {
+          throw new Error('No pending requests have been found!')
+         }
+
+         if (pendingRequests.status === 'ACCEPTED') {
+          throw new Error('You have already accepted the request!');
+         }
+       
+         pendingRequests.status = 'ACCEPTED';
+         await pendingRequests.save();
+
+         await User.findByIdAndUpdate(pendingRequests.from, { $addToSet: { friends: pendingRequests.to }});
+         await User.findByIdAndUpdate(pendingRequests.to, { $addToSet: { friends: pendingRequests.from }})
+         
+         return pendingRequests
+        },
+
+        rejectFriendRequest: async (_, { requestId }) => {
+          const deniedRequests = await FriendRequest.findById(requestId);
+
+          if (!deniedRequests) {
+            throw new Error('There is no PENDING requests');
+          }
+
+          deniedRequests.status = 'DENIED';
+          await deniedRequests.save();
+
+          return deniedRequests;
         },
     },
   };
