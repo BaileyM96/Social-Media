@@ -1,6 +1,6 @@
 const { Schema } = require('mongoose');
 const mongoose = require('mongoose');
-const User = require('./userProfile');
+
 
 const friendRequestSchema = new Schema({
     from: {

@@ -6,11 +6,9 @@ const jwt = require('jsonwebtoken')
 
 const resolvers = {
     Query: {
-      // Resolver for 'user' query
       user: async (_, { email }, context) => {
-        // Fetch the user based on the ID from your data source (e.g., database)
+  
         const user = await User.findOne({ email: email }).populate('sentFriendRequest');
-        console.log('QUERY USER', user);
         return user;
       },
     },
@@ -36,7 +34,7 @@ const resolvers = {
           return { token, user}
         },
 
-        sendFriendRequest: async (_, { fromUserName, toUserName }) => {
+        sendFriendRequest: async (_, { fromUserName, toUserName }) => { 
           const fromUser = await User.findOne({ username: fromUserName });
           const toUser = await User.findOne({ username: toUserName });
 
@@ -57,8 +55,7 @@ const resolvers = {
             to: toUser.id,
             status: 'PENDING',
           });
-          // console.log('fromUser', fromUser);
-          // console.log('toUser', toUser);
+        
           await User.findByIdAndUpdate(toUser.id, {
             $push: { receivedFriendRequest: newFriendRequest.id }
           });
@@ -67,12 +64,10 @@ const resolvers = {
             $push: { sentFriendRequest: newFriendRequest.id }
           });
   
-          // console.log('new friend request', newFriendRequest)
           return newFriendRequest;
         },
 
         acceptFriendRequest: async (_, { requestId }) => {
-         //DEFINE friendRequests and find it by its id from the User schema
          const pendingRequests = await FriendRequest.findById(requestId);
 
          if (!pendingRequests) {
@@ -86,16 +81,23 @@ const resolvers = {
          pendingRequests.status = 'ACCEPTED';
          await pendingRequests.save();
 
-         console.log(`Adding Friend: ${pendingRequests.to} to user ${pendingRequests.from}`)
          await User.findByIdAndUpdate(pendingRequests.from, { $addToSet: { friends: pendingRequests.to }});
-         console.log(`Adding Friend: ${pendingRequests.from} from user ${pendingRequests.to}`)
          await User.findByIdAndUpdate(pendingRequests.to, { $addToSet: { friends: pendingRequests.from }})
          
          return pendingRequests
         },
 
-        rejectFriendRequest: async () => {
+        rejectFriendRequest: async (_, { requestId }) => {
+          const deniedRequests = await FriendRequest.findById(requestId);
 
+          if (!deniedRequests) {
+            throw new Error('There is no PENDING requests');
+          }
+
+          deniedRequests.status = 'DENIED';
+          await deniedRequests.save();
+
+          return deniedRequests;
         },
     },
   };
