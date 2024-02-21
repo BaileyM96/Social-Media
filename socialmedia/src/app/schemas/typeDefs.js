@@ -9,6 +9,15 @@ type User {
     friends: [User!]!
     sentFriendRequest: [FriendRequest!]!
     receivedFriendRequest: [FriendRequest!]!
+    posts: [Post!]!
+}
+
+type Post {
+    id: ID!
+    content: String!
+    author: User
+    createdAt: String!
+    likes: Int!
 }
 
 type FriendRequest {
@@ -45,6 +54,9 @@ type Mutation {
     sendFriendRequest(fromUserName: String!, toUserName: String!): FriendRequest!
     acceptFriendRequest(requestId: ID!): FriendRequest!
     rejectFriendRequest(requestId: ID!): FriendRequest!
+    createPost(content: String!, authorId: ID!): Post!
+    likedPost(postId: ID!, userId: ID!): Post
+    unlikePost(postId: ID!, userId: ID!): Post
 }
 `;
 

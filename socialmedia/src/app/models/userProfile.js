@@ -30,6 +30,10 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'FriendRequest',
     }],
+    posts: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Post'
+    }],
 }, {
     timestamps: true,
 });

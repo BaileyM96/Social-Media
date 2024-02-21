@@ -1,8 +1,9 @@
-const { User, FriendRequest } = require('../models');
+const { User, FriendRequest, Post } = require('../models');
 const { AuthenticationError, UserInputError, ApolloError } = require('apollo-server-express');
 const bcrypt = require('bcryptjs');
 const { signToken } = require('../utils/auth');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const { create } = require('../models/friendRequest');
 
 const resolvers = {
     Query: {
@@ -99,6 +100,56 @@ const resolvers = {
 
           return deniedRequests;
         },
+        createPost: async (_, { content, authorId }) => {
+          const author = await User.findById(authorId);
+
+          if (!author) {
+            throw new Error('The author can not be found!');
+          }
+
+          const newPost = await Post.create({
+            content,
+            author: authorId
+          });
+
+          await User.findByIdAndUpdate(authorId, {
+            $push: { posts: newPost.id }
+          })
+
+          if (!newPost) {
+            throw new Error('Post can not be created!');
+          }
+          
+          return newPost;
+        },
+        likedPost: async (_, { postId, userId }) => {
+          const post = await Post.findById(postId);
+          const user = await User.findById(userId);
+           
+          if(!post) {
+            throw new Error('Cannot find post');
+          }
+
+          await Post.findByIdAndUpdate(post, {
+            $push: { likes: user }
+          });
+          return post;
+        },
+        unlikePost: async (_,{ postId, userId }) => {
+          const post = await Post.findById(postId);
+          const user = await User.findById(userId);
+        
+          if (!post) {
+            throw new Error('Cannot find post')
+          };
+
+          await Post.findByIdAndUpdate(postId, {
+            $pull: { likes: userId }
+          });
+
+          await post.save();
+          return post;
+        } 
     },
   };
 
