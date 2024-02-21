@@ -102,7 +102,6 @@ const resolvers = {
         },
         createPost: async (_, { content, authorId }) => {
           const author = await User.findById(authorId);
-          console.log('author', author)
 
           if (!author) {
             throw new Error('The author can not be found!');
@@ -113,17 +112,14 @@ const resolvers = {
             author: authorId
           });
 
-          console.log('New Post', newPost);
-
           await User.findByIdAndUpdate(authorId, {
             $push: { posts: newPost.id }
           })
-          console.log('User after new post', User);
 
           if (!newPost) {
             throw new Error('Post can not be created!');
           }
-          console.log('End', newPost);
+          
           return newPost;
         },
         likedPost: async (_, { postId, userId }) => {
@@ -139,17 +135,21 @@ const resolvers = {
           });
           return post;
         },
-        // unlikePost: async (_,{ postId, userId }) => {
-        //   const post = await Post.findById(postId);
-        //   const user = await User.findById(userId)
+        unlikePost: async (_,{ postId, userId }) => {
+          const post = await Post.findById(postId);
+          const user = await User.findById(userId);
+        
+          if (!post) {
+            throw new Error('Cannot find post')
+          };
 
-        //   await Post.findByIdAndUpdate(post, {
-        //     $pull: { likes: user }
-        //   });
-        //   console.log('remove POST', post);
-        //   console.log('remove POST', user);
-        //   return post;
-        // } 
+          await Post.findByIdAndUpdate(postId, {
+            $pull: { likes: userId }
+          });
+
+          await post.save();
+          return post;
+        } 
     },
   };
 
