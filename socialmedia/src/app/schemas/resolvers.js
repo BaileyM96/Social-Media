@@ -2,7 +2,6 @@ const { User, FriendRequest, Post } = require('../models');
 const { AuthenticationError, UserInputError, ApolloError } = require('apollo-server-express');
 const bcrypt = require('bcryptjs');
 const { signToken } = require('../utils/auth');
-const jwt = require('jsonwebtoken');
 const { create } = require('../models/friendRequest');
 
 const resolvers = {
@@ -31,11 +30,17 @@ const resolvers = {
           if (!correctPW) {
             throw new AuthenticationError('Invalid password');
           }
-          const token = jwt.sign({ email: user.email, id: user.id, username: user.username }, process.env.JWT_SECRET);
+          const token = signToken({ email: user.email, id: user.id, username: user.username });
+          console.log('token resolver', token)
+          console.log('user', user)
           return { token, user}
         },
 
-        sendFriendRequest: async (_, { fromUserName, toUserName }) => { 
+        sendFriendRequest: async (_, { fromUserName, toUserName }, context) => {
+          console.log('Context', context.user) 
+          if (!context.user) {
+            throw new AuthenticationError('You need to be logged in!');
+          }
           const fromUser = await User.findOne({ username: fromUserName });
           const toUser = await User.findOne({ username: toUserName });
 

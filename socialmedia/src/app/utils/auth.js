@@ -1,17 +1,19 @@
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
-
 const expiration = '2h';
 
 module.exports = {
-    authmiddleware: function ({ req }) {
+    authMiddleWare: function ({ req }) {
+        console.log('Start!')
+        const context = {}
         let token = req.body.token || req.query.token || req.headers.authorization;
+        console.log('Auth Header', req.headers.authorization);
+        console.log('Token auth', token)
 
         if (req.headers.authorization) {
             token = token.split(' ').pop().trim();
         }
 
-        const context = {};
         
         try {
             const { data } = jwt.verify(token, JWT_SECRET);
@@ -19,7 +21,7 @@ module.exports = {
         } catch (error) {
             console.log('Invalid Token:', error.message);
         }
-        return context;
+        return context
     },
     signToken: function ({ email, id, username }) {
         const payload = { email, id, username };
