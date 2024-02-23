@@ -5,6 +5,16 @@ const { signToken } = require('../utils/auth');
 const jwt = require('jsonwebtoken');
 const { create } = require('../models/friendRequest');
 
+const emailValidation = (email) => {
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  return emailRegex.test(String(email).toLowerCase());
+};
+
+const passwordValidation = (password) => {
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+  return passwordRegex.test(password);
+
+}
 const resolvers = {
     Query: {
       user: async (_, { email }, context) => {
@@ -17,6 +27,19 @@ const resolvers = {
     Mutation: {
         createUser: async(_, { input }) => {
           const { username, email, password } = input;
+          const existingUser = await User.findOne({username});
+
+          if (existingUser) {
+            throw new UserInputError('A user with that username already exists!');
+          }
+         
+          if (!emailValidation(email)) {
+            throw new UserInputError('Must provide valid email address');
+          }
+
+          if (!passwordValidation(password)) {
+            throw new UserInputError('Must provide an uppercase and lowercase charcter with a special symbol that is 8 characters long');
+          }
           const user = await User.create({ email, password, username });
           const token = signToken({ email: user.email, id: user.id, username: user.username });
           return { token, user };
@@ -24,6 +47,11 @@ const resolvers = {
 
         login: async (_, { email, password }) => {
           const user = await User.findOne({ email });
+
+          if (!emailValidation(email)) {
+            throw new UserInputError('Must provide valid email adress!')
+          }
+
           if (!user) {
             throw new AuthenticationError('No user found with that username!')
           }
