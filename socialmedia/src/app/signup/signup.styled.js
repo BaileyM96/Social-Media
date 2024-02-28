@@ -1,12 +1,13 @@
 import styled  from 'styled-components';
-import TextField from '@mui/material/TextField'
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button'
 
 export const InputContainer = styled.div`
 display: flex;
 flex-direction: column;
 justify-content: center;
 align-items: center;
-height: 100vh;
+height: 50vh;
 `;
 export const StyledHeaderContainer = styled.div`
 display: flex;
@@ -21,4 +22,15 @@ color: black;
 
 export const StyledTextField = styled(TextField)`
 padding: 12px;
+`;
+
+export const StyledButtonContainer = styled.div`
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: row;
+`;
+
+export const StyledButton = styled(Button)`
+
 `;
