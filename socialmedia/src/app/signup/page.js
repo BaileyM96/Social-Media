@@ -16,9 +16,24 @@ import {
 } 
     from "./signup.styled";
 
-
-
 export default function Page() {
+    const [userInput, setUserInput] = useState({
+        email: '',
+        password: '',
+        username: '',
+    });
+    
+    const [creatuser, { data, loading, error }] = useMutation(CREATE_USER);
+
+    //NEED TO HANDLE THE INPUT CHANGE 
+        //DEFINE A varible called handleInputChange
+            //THIS will take an argument of an event(e)
+    //NEED TO HANDLE FORM SUBMISSION
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setUserInput({ ...userInput, [name]: value })
+    }
+    
     return (
         <>
         <StyledHeaderContainer>
