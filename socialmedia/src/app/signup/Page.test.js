@@ -4,7 +4,7 @@
 import React from 'react';
 import { render,screen, fireEvent } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
-import { CREATE_USER } from '../utils/mutations';
+import { CREATE_USER } from '../../utils/mutations';
 import Page from './page';
 
 const mocks = [{

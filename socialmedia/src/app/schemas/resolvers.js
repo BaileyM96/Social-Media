@@ -42,7 +42,8 @@ const resolvers = {
           }
           const user = await User.create({ email, password, username });
           const token = signToken({ email: user.email, id: user.id, username: user.username });
-          return { token, user };
+          console.log('user', user);
+          return user;
         },
 
         login: async (_, { email, password }) => {
