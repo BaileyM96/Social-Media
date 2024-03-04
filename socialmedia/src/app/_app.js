@@ -1,13 +1,12 @@
 import { ApolloProvider } from '@apollo/client';
-import client from '../apolloClient'; 
-import Page from './signup/page';
+import { apolloClient } from './utils/mutations';
 
-function MyApp() {
+function MyApp({ Component, pageProps }) {
   return (
-    <ApolloProvider client={client}>
-      <Page />
+    <ApolloProvider client={apolloClient}>
+      <Component {...pageProps} />
     </ApolloProvider>
-  );
+  )
 }
 
 export default MyApp;

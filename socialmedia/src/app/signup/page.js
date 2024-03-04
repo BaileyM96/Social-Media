@@ -1,11 +1,7 @@
-//CREATE STATE FOR INPUT FIELD
-//Change this use client later
-    //Make only the input fields client side and then make the rest of the page server side
 'use client'
 import React from "react";
 import { useState} from "react";
-import { useMutation } from "@apollo/client";
-import { CREATE_USER } from "../utils/mutations";
+import { useMutation, gql} from "@apollo/client";
 import { 
     InputContainer, 
     StyledTextField, 
@@ -15,6 +11,23 @@ import {
     StyledButtonContainer 
 } 
     from "./signup.styled";
+import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
+import { apolloClient } from "../lib/apolloClient";
+
+if (process.env.NODE_ENV !== "production") {
+    loadErrorMessages();
+    loadDevMessages();
+  }
+
+    const CREATE_USER = gql`
+    mutation CreateUser($input: CreateUserInput!) {
+        createUser(input: $input) {
+           email
+           password
+           username
+        }
+    }
+    `;
 
 export default function Page() {
     const [userInput, setUserInput] = useState({
@@ -23,52 +36,33 @@ export default function Page() {
         username: '',
     });
 
-    const [createUser, { loading, error }] = useMutation(CREATE_USER);
+console.log('Apollo client instance', apolloClient)
+    const [createUser, { loading, error }] = useMutation(CREATE_USER, {
+        client: apolloClient,
+    });
 
-    
-    // const [createuser, { data, loading, error }] = useMutation(CREATE_USER);
+    const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    try {
+      await createUser({
+        variables: {
+          email: userInput.email,
+          password: userInput.password,
+          username: userInput.username,
+        },
+      });
+      // Handle success (e.g., redirecting to another page or clearing the form)
+    } catch (err) {
+      // Handle error (e.g., displaying an error message)
+      console.error("Error creating a user", err);
+    }
+  };
 
-    //NEED TO HANDLE THE INPUT CHANGE 
-        //DEFINE A varible called handleInputChange
-            //THIS will take an argument of an event(e)
-    //NEED TO HANDLE FORM SUBMISSION
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setUserInput({ ...userInput, [name]: value })
     }
-
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     console.log('hello')
-    //     try {
-    //          const { data } = await createuser({
-    //             variables: { ...userInput },
-    //          })
-    //          data.createuser
-    //          console.log('success');
-    //     } catch (e) {
-    //         console.error(e)
-    //     }
-    // }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent default form submission behavior
-    
-        try {
-            const { data } = await createUser({
-                variables: {
-                    input: userInput, // Pass formData as variables to the mutation
-                },
-            });
-    
-            console.log('User created:', data.createUser);
-            // Handle success (e.g., redirecting the user or showing a success message)
-        } catch (error) {
-            console.error('Error creating user:', error);
-            // Handle error (e.g., displaying error messages to the user)
-        }
-    };
-    
+   
     
     return (
         <>
@@ -82,6 +76,8 @@ export default function Page() {
                 id="outlined-basic" 
                 label="Email" 
                 variant="outlined"
+                value={userInput.email}
+                onChange={handleInputChange}
 
             />
             <StyledTextField
@@ -89,12 +85,16 @@ export default function Page() {
                 id="outlined-basic" 
                 label="Password" 
                 variant="outlined" 
+                value={userInput.password}
+                onChange={handleInputChange}
             />
             <StyledTextField
                 required 
                 id="outlined-basic" 
                 label="Username" 
-                variant="outlined" 
+                variant="outlined"
+                value={userInput.username}
+                onChange={handleInputChange} 
             />
         </InputContainer>
 
