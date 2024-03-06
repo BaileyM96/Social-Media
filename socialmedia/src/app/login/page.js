@@ -7,6 +7,10 @@ import { LoginContainer, StyledLoginField, StyledLoginButton } from "./login.sty
 import Link from 'next/link'
 
 export default function Login() {
+    const [inputField, setInputField] = useState({
+        email: '',
+        password: ''
+    })
     return (
         <>
         <StyledHeader>Login</StyledHeader>
