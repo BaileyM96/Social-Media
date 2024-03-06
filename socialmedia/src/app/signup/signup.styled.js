@@ -23,6 +23,7 @@ color: black;
 
 export const StyledTextField = styled(TextField)`
 padding: 12px;
+color: black;
 `;
 
 export const StyledButtonContainer = styled.div`
