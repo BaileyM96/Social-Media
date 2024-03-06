@@ -40,9 +40,17 @@ const resolvers = {
           if (!passwordValidation(password)) {
             throw new UserInputError('Must provide an uppercase and lowercase charcter with a special symbol that is 8 characters long');
           }
-          const user = await User.create({ email, password, username });
+
+          let user;
+          try {
+            user = await User.create({ email, password, username });
+          } catch (error) {
+            console.error('Error creating user', error)
+            throw new Error('Failed to create user')
+          }
           const token = signToken({ email: user.email, id: user.id, username: user.username });
-          return { token, user };
+          console.log('user', user);
+          return user;
         },
 
         login: async (_, { email, password }) => {
@@ -181,5 +189,5 @@ const resolvers = {
     },
   };
 
-  module.exports = resolvers;
+  module.exports = { resolvers, emailValidation };
   
