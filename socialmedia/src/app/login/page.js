@@ -5,12 +5,55 @@ import { useMutation, gql } from "@apollo/client";
 import { StyledHeader } from "../signup/signup.styled";
 import { LoginContainer, StyledLoginField, StyledLoginButton } from "./login.styled";
 import Link from 'next/link'
+import { apolloClient } from "../lib/apolloClient";
+import { Snackbar, Alert } from "@mui/material";
+
+
+const LOGIN_USER = gql`
+    mutation login($email: String!, $password: String!) {
+        login(email: $email, password: $password) {
+            user {
+                id
+            }
+        }
+    }
+`;
+
 
 export default function Login() {
     const [inputField, setInputField] = useState({
         email: '',
-        password: ''
+        password: '',
     })
+
+console.log('apollo client', apolloClient)
+    const [login, { loading }] = useMutation(LOGIN_USER, {
+        client: apolloClient
+    });
+
+
+    const handleInputField = (e) => {
+        const { name, value } = e.target;
+        setInputField({ ...inputField, [name]: value })
+    }
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        try {
+            await login({
+                variables: {
+                    email: inputField.email,
+                    password: inputField.password
+                },
+            });
+            setInputField({
+                email: '',
+                password: ''
+            });
+        } catch (err) {
+            console.error('There was a problem trying to login', err);
+        }
+    }
     return (
         <>
         <StyledHeader>Login</StyledHeader>
@@ -22,16 +65,18 @@ export default function Login() {
                 label="Email"
                 name="email" 
                 variant="outlined"
+                onChange={handleInputField}
             />
             <StyledLoginField 
                 required
                 id="outlined-basic"
                 label="Password"
-                name="Password"
+                name="password"
                 type="password" 
                 variant="outlined"
+                onChange={handleInputField}
             />
-            <StyledLoginButton variant="outlined">Login</StyledLoginButton>
+            <StyledLoginButton variant="outlined" onClick={handleLogin}>Login</StyledLoginButton>
             <Link href='/signup'>Dont have an account? Signup here!</Link>
         </LoginContainer>
         </>

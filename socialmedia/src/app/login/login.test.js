@@ -1,25 +1,29 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, getByRole } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing";
 import Login from "./page";
 import { StyledLoginField } from "./login.styled";
 import Link from "next/link";
 import { LOGIN_USER } from './page';
 
-const mocks = [{
-    request: {
-        query: LOGIN_USER,
-        variables: {
-            email: 'baileymejia28@gmail.com',
-            password: 'Daisy',
-        }
-    },
-    result: {
-        data: {
-            login: { id: '1', email: 'baileymejia28@gmail.com', password: 'Daisy' }
-        }
-    }
-}]
+// const mocks = [{
+//     request: {
+//         query: LOGIN_USER,
+//         variables: {
+//             email: 'user@example.com',
+//             password: 'Password123!',
+//         }
+//     },
+//     result: {
+//         data: {
+//             login: {
+//                 user: {
+//                     id: '1'
+//                 }
+//             }
+//         }
+//     }
+// }]
 
 describe('Login', () => {
     it('renders the login page', () => {
@@ -37,13 +41,22 @@ describe('Login', () => {
         fireEvent.click(signupButton);
     });
     it('allows the user to type in the input field', () => {
+        render(<Login />)
+        const emailField = screen.getByLabelText(/email/i);
+        const passwordField = screen.getByLabelText(/password/i);
 
+        fireEvent.change(emailField, { target: { value: 'example@gmail.com' }})
+        fireEvent.change(passwordField, { target: { value: 'Password123!' }})
     });
     // it('Logs you in without error', async () => {
     //     render(
     //         <MockedProvider mocks={mocks} addTypename={false}>
-    //             <Login email='baileymejia28@gmail.com' password='Daisy' />
+    //             <Login />
     //         </MockedProvider>
     //     )
+    //     fireEvent.change(emailField, { target: { value: 'example@gmail.com' }})
+    //     fireEvent.change(passwordField, { target: { value: 'Password123!' }})
+
+    //     fireEvent.click(getByRole('button', { name: /login/i }))
     // })
 })
