@@ -30,8 +30,6 @@ if (process.env.NODE_ENV !== "production") {
     `;
 
 export default function Page() {
-    //DONE CREATE STATE FOR THE TOASTER TO OPEN
-    //TODO YOU CAN MAKE THE STATE JUST LIKE THE USERINPUT
     const [userInput, setUserInput] = useState({
         email: '',
         password: '',
