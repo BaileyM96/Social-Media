@@ -9,7 +9,7 @@ import { apolloClient } from "../lib/apolloClient";
 import { Snackbar, Alert } from "@mui/material";
 
 
-const LOGIN_USER = gql`
+export const LOGIN_USER = gql`
     mutation login($email: String!, $password: String!) {
         login(email: $email, password: $password) {
             user {
@@ -24,11 +24,22 @@ export default function Login() {
     const [inputField, setInputField] = useState({
         email: '',
         password: '',
+    });
+
+    const [open, setOpen] = useState({
+        open: false,
+        message: '',
+        severity: ''
     })
 
-console.log('apollo client', apolloClient)
     const [login, { loading }] = useMutation(LOGIN_USER, {
-        client: apolloClient
+        client: apolloClient,
+        onCompleted: () => {
+            setOpen({ open: true, message: 'Great Success!', severity: 'success' })
+        },
+        onError: () => {
+            setOpen({ open: true, message: 'Incorrect email or password', severity: 'error' })
+        }
     });
 
 
@@ -79,6 +90,12 @@ console.log('apollo client', apolloClient)
             <StyledLoginButton variant="outlined" onClick={handleLogin}>Login</StyledLoginButton>
             <Link href='/signup'>Dont have an account? Signup here!</Link>
         </LoginContainer>
+
+        <Snackbar open={open.open} autoHideDuration={5000}>
+            <Alert severity={open.severity} onClose={() => setOpen({ message: '', severity: '' })}>
+                {open.message}
+            </Alert>
+        </Snackbar>
         </>
     )
 }
