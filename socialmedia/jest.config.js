@@ -5,6 +5,7 @@
 
 /** @type {import('jest').Config} */
 const config = {
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -194,7 +195,7 @@ const config = {
   // Whether to use watchman for file crawling
   // watchman: true,
   testEnvironment: 'jest-environment-jsdom',
-  
+
 };
 
 module.exports = config;
