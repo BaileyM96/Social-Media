@@ -1,5 +1,6 @@
+'use client';
 import React from "react";
-import { StyledHomeContainer, StyledCard } from "./home.styled";
+import { StyledHomeContainer, StyledCard, StyledCardContent } from "./home.styled";
 
 export default function Home() {
     return (
@@ -10,9 +11,9 @@ export default function Home() {
 
             <StyledHomeContainer>
                 <StyledCard>
-                    <CardContent>
+                    <StyledCardContent>
                         <h3>Post content from friends</h3>
-                    </CardContent>
+                    </StyledCardContent>
                 </StyledCard>
             </StyledHomeContainer>
         </>
