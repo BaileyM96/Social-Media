@@ -15,7 +15,13 @@ padding: 2%;
 `;
 
 export const StyledCard = styled(Card)`
-/* padding-top: 12px !important */
+width: 95% !important;
+@media screen and (min-width: 768px) {
+    width: 60% !important;
+}
+@media screen and (min-width: 1640px) {
+    width: 40% !important;
+}
 `;
 
 export const StyledCardContent = styled(CardContent)`

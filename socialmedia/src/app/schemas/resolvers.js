@@ -22,8 +22,24 @@ const resolvers = {
         const user = await User.findOne({ email: email }).populate('sentFriendRequest');
         return user;
       },
+      friendsPosts: async (_, { userId }) => {
+        const user = await User.findById(userId).populate('friends');
+        const friendsPosts = await Post.find({ author: { $in: user.friends } })
+                                        .populate('author', '_id username'); 
+    
+        const convertedPosts = friendsPosts.map(post => {
+            let postObject = post.toObject({ virtuals: true }); 
+            postObject.id = postObject._id.toString(); 
+            delete postObject._id;
+            delete postObject.__v; 
+    
+            postObject.likes = postObject.likes.map(like => like.toString());
+            return postObject;
+        });
+        return convertedPosts;
     },
-  
+    
+    },
     Mutation: {
         createUser: async(_, { input }) => {
           const { username, email, password } = input;
