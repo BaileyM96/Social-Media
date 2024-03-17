@@ -1,10 +1,11 @@
 'use client';
-import React from "react";
+import React, { use } from "react";
 import { useState } from "react";
 import { useMutation, gql } from "@apollo/client";
 import { StyledHeader } from "../signup/signup.styled";
 import { LoginContainer, StyledLoginField, StyledLoginButton } from "./login.styled";
 import Link from 'next/link'
+import { useRouter } from "next/navigation";
 import { apolloClient } from "../lib/apolloClient";
 import { Snackbar, Alert } from "@mui/material";
 
@@ -31,6 +32,9 @@ export default function Login() {
         message: '',
         severity: ''
     })
+
+    const router = useRouter();
+
 
     const [login, { loading }] = useMutation(LOGIN_USER, {
         client: apolloClient,
@@ -61,6 +65,7 @@ export default function Login() {
                 email: '',
                 password: ''
             });
+            router.push('/home');
         } catch (err) {
             console.error('There was a problem trying to login', err);
         }

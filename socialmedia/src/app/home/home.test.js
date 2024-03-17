@@ -15,10 +15,6 @@ const mocks = [{
                 {
                     id: '1',
                     content: 'Post content from friends',
-                    user: {
-                        id: '2',
-                        username: 'user1'
-                    }
                 }
             ]
         }
