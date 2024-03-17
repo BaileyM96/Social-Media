@@ -41,6 +41,7 @@ input CreateUserInput {
 
 type Query {
     user(email: String!): User
+    friendsPosts(userId: ID!): [Post!]!
 }
 
 type Auth {
