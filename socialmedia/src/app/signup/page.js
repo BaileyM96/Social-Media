@@ -14,6 +14,7 @@ import {
 import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 import { apolloClient } from "../lib/apolloClient";
 import { Snackbar, Alert } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 if (process.env.NODE_ENV !== "production") {
     loadErrorMessages();
@@ -41,6 +42,8 @@ export default function Page() {
         message: '',
         severity: ''
     });
+
+    const router = useRouter();
 
 
     const handleOpenSnackbar = (message, severity = 'error') => {
@@ -78,6 +81,7 @@ export default function Page() {
             }
         },
       });
+      router.push('/home');
     } catch (err) {
       console.error("Error creating a user", err);
     }

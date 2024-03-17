@@ -25,6 +25,15 @@ const mocks = [{
     }
 }]
 
+const mockPush = jest.fn();
+
+//Need to mock next/router to avoid errors
+jest.mock('next/navigation', () => ({
+    useRouter: () =>  ({
+        push: mockPush,
+    })
+}))
+
 describe('Login', () => {
     it('renders the login page', () => {
         render(<Login />)
@@ -70,10 +79,20 @@ describe('Login', () => {
 
         fireEvent.click(screen.getByRole('button', { name: /Login/i }));
         await waitFor(() => {
-            screen.debug();
             const successMessage = screen.getByText(/Great Success!/i);
             expect(successMessage).toBeInTheDocument();
         })
-
     });
+    it('Redirects the user to the home page after logging in', async () => {
+        render(
+            <MockedProvider mocks={mocks} addTypename={false}>
+                <Login />
+            </MockedProvider>
+        )
+
+        fireEvent.click(screen.getByRole('button', { name: /Login/i }));
+        await waitFor(() => {
+            expect(mockPush).toHaveBeenCalledWith('/home');
+        })
+    })
 })

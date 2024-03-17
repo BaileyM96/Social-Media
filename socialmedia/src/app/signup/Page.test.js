@@ -1,6 +1,3 @@
-//NEED TO CREATE A SIGNUP PAGE FOR A USER TO CREATE THEIR ACCOUNT
-
-//FIRST STEP: Render the signup page/component
 import React from 'react';
 import { render,screen, fireEvent } from '@testing-library/react';
 import { MockedProvider } from '@apollo/client/testing';
@@ -23,6 +20,14 @@ const mocks = [{
     }
 }]
 
+const mockPush = jest.fn();
+
+jest.mock('next/router', () => ({
+    useRouter: () => ({
+        push: mockPush,
+    })
+}));
+
 
 describe('Page', () => {
     it('renders the signup page', () => {
@@ -40,8 +45,6 @@ describe('Page', () => {
         fireEvent.change(usernameField, {target: {value: 'username'}})
     });
 
-    //Need to test to make sure the create user/submit button works when clicked
-        //And the information then creates the new user
     it('Renders the submit and cancel button to create the new user', () => {
         render(<Page />);
         const submitButton = screen.getByRole('button', {name: /sign up/i});
@@ -60,5 +63,17 @@ describe('Page', () => {
         fireEvent.change(getByLabelText(/username/i), { target: { value: 'username'}});
 
         fireEvent.click(getByRole('button', { name: /signup/i}))
+    });
+    it('Redirects the user to the home page after signing up', async () => {
+        render(
+            <MockedProvider mocks={mocks} addTypename={false}>
+                <Login />
+            </MockedProvider>
+        )
+
+        fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
+        await waitFor(() => {
+            expect(mockPush).toHaveBeenCalledWith('/home');
+        })
     })
 })
