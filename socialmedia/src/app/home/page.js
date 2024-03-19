@@ -7,6 +7,7 @@ import Favorite from "@mui/icons-material/Favorite";
 import { useQuery, gql } from "@apollo/client";
 import moment from "moment";
 import CircularProgress from '@mui/material/CircularProgress';
+import SpeedDial from "../Components/SpeedDial/page";
 
 const GET_FRIENDS_POSTS = gql`
     query GetFriendsPosts($userId: ID!) {
@@ -54,7 +55,9 @@ export default function Home() {
                         </StyledCardActions>
                     </StyledCard>
                 ))}
-            </StyledHomeContainer>            
+            </StyledHomeContainer>
+
+            <SpeedDial />            
         </>
     )
 };
