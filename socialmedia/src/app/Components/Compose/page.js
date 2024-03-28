@@ -1,18 +1,37 @@
 'use client';
 import React from "react";
-import { StyledComposeContainer, StyledComposeField } from "./compose.styled";
+import { StyledComposeContainer, StyledComposeField, ComposeHeader, StyledButton } from "./compose.styled";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { StyledAvatar } from "../../home/home.styled";
+import { apolloClient } from "../../lib/apolloClient";
+import { GET_USER } from "../../utils/query";
+import { useQuery } from "@apollo/client";
+
+
 
 export default function Compose() {
+    const { loading, error, data } = useQuery(GET_USER, {
+        client: apolloClient,
+        variables: {
+            email: 'baileymejia28@gmail.com'
+        }
+    })
     return (
         <>
-            <h1>Compose</h1>
+            <ComposeHeader>
+                <ArrowBackIcon />
+                <StyledButton variant="contained" color="primary">Post</StyledButton>
+            </ComposeHeader>
 
             <StyledComposeContainer>
+                <StyledAvatar></StyledAvatar>
                 <StyledComposeField
-                    id="standard-basic"
+                    id="standard-multiline-flexible"
                     label="What's on your mind?"
                     multiline
-                    maxRows={4}
+                    maxRows={5}
+                    variant="standard"
+                    InputProps={{ disableUnderline: true }}      
                 />
             </StyledComposeContainer>
         </>
