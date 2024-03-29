@@ -15,7 +15,13 @@ export default function Compose() {
         variables: {
             email: 'baileymejia28@gmail.com'
         }
-    })
+    });
+
+    if (loading) return <p>Loading...</p>;
+    
+    if (error) return `Error! ${error.message}`;
+
+
     return (
         <>
             <ComposeHeader>
@@ -24,7 +30,7 @@ export default function Compose() {
             </ComposeHeader>
 
             <StyledComposeContainer>
-                <StyledAvatar></StyledAvatar>
+                <StyledAvatar>{data.user.username[0]}</StyledAvatar>
                 <StyledComposeField
                     id="standard-multiline-flexible"
                     label="What's on your mind?"
