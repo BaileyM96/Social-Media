@@ -31,3 +31,10 @@ border-bottom-left-radius: 9999px;
     border-top-left-radius: 9999px;
     border-top-right-radius: 9999px;
 `;
+
+export const StyledSkeletonContainer = styled.div`
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+`;

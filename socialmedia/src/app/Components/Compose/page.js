@@ -1,15 +1,22 @@
 'use client';
 import React from "react";
-import { StyledComposeContainer, StyledComposeField, ComposeHeader, StyledButton } from "./compose.styled";
+import { useRouter } from "next/navigation";
+import { StyledComposeContainer, StyledComposeField, ComposeHeader, StyledButton, StyledSkeletonContainer } from "./compose.styled";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { StyledAvatar } from "../../home/home.styled";
 import { apolloClient } from "../../lib/apolloClient";
 import { GET_USER } from "../../utils/query";
 import { useQuery, useMutation } from "@apollo/client";
+import { useState } from "react";
+import { CREATE_POST } from "../../utils/mutations";
+import Skeleton  from "@mui/material/Skeleton";
+import Stack from '@mui/material/Stack';
+
 
 
 
 export default function Compose() {
+
     const { loading, error, data } = useQuery(GET_USER, {
         client: apolloClient,
         variables: {
@@ -17,35 +24,56 @@ export default function Compose() {
         }
     });
 
+    const [postField, setPostField] = useState({
+        content: ''
+    });
+
+    const router = useRouter();
+
+    const handleInputField = (e) => {
+        const { name, value } = e.target;
+        setPostField({ ...postField, [name]: value })
+    }
+
     const [createPost] = useMutation(CREATE_POST, {
         client: apolloClient,
-        variables: {
-            authorId: '65d28475b8449265f68f9b4b'
-        }
     })
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) 
+    return
+        <Stack spacing={1}>
+            <Skeleton variant="circular" width={40} height={40} />
+            <Skeleton variant="text" width={200} height={40} />
+            <Skeleton variant="round" width={200} height={200} />
+        </Stack>
+    ;
     
     if (error) return `Error! ${error.message}`;
 
-    //NEED TO HANDLE THE POST CREATION WITH INPUT FUNCTIONALITY
-    handlePost = async () => {
+    const handlePost = async (e) => {
+        e.preventDefault();
         try {
             await createPost({
                 variables: {
-                    content: 'Hello World'
-                }
-            })
+                    content: postField.content,
+                    authorId: '65d28475b8449265f68f9b4b'
+                },
+            });
+            setPostField({ content: '' });
         } catch (error) {
             console.error(error)
         }
     }
 
+    const handleBack = () => {
+        router.push('/home');
+    };
+
     return (
         <>
             <ComposeHeader>
-                <ArrowBackIcon />
-                <StyledButton variant="contained" color="primary">Post</StyledButton>
+                <ArrowBackIcon onClick={handleBack}/>
+                <StyledButton variant="contained" color="primary" onClick={handlePost} disabled={!postField.content.trim()}>Post</StyledButton>
             </ComposeHeader>
 
             <StyledComposeContainer>
@@ -56,7 +84,10 @@ export default function Compose() {
                     multiline
                     maxRows={5}
                     variant="standard"
-                    InputProps={{ disableUnderline: true }}      
+                    InputProps={{ disableUnderline: true }}
+                    name="content"
+                    value={postField.content}
+                    onChange={handleInputField}      
                 />
             </StyledComposeContainer>
         </>
