@@ -8,6 +8,8 @@ import { useQuery, gql } from "@apollo/client";
 import moment from "moment";
 import CircularProgress from '@mui/material/CircularProgress';
 import SpeedDial from "../Components/SpeedDial/page";
+import Skeleton from "@mui/material/Skeleton";
+import Stack from "@mui/material/Stack";
 
 const GET_FRIENDS_POSTS = gql`
     query GetFriendsPosts($userId: ID!) {
@@ -31,9 +33,32 @@ export default function Home() {
         }
     });
 
-    if (loading) return <CircularProgress />;
-    if (error) return `Error! ${error.message}`;
+    if (loading) 
+    return (
+        <StyledHomeContainer>
+            {Array.from(new Array(5)).map((_, index) => (
+                <StyledCard key={index}>
+                    <StyledCardHeader 
+                        avatar={<Skeleton animation='wave' variant="circular" width={40} height={40} />}
+                        title={<Skeleton animation='wave' variant="text" width="40%" />}
+                        subheader={<Skeleton animation='wave' variant="text" width="20%" />}
+                    />
+                    <StyledCardContent>
+                        <Skeleton animation='wave' variant="text" />
+                        <Skeleton animation='wave' variant="text" />
+                        <Skeleton animation='wave' variant="text" width="60%" />
+                    </StyledCardContent>
+                    <StyledCardActions>
+                        <Skeleton animation='wave' variant="rectangular" width={48} height={48} /> 
+                    </StyledCardActions>
+                </StyledCard>
+            ))}
+        </StyledHomeContainer>
+    );
 
+    if (error) return `Error! ${error.message}`;
+    
+    console.log(data)
     return (
         <>
             <StyledHomeContainer>

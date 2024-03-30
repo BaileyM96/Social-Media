@@ -40,13 +40,13 @@ export default function Compose() {
     })
 
     if (loading) 
-    return
+    return (
         <Stack spacing={1}>
             <Skeleton variant="circular" width={40} height={40} />
             <Skeleton variant="text" width={200} height={40} />
             <Skeleton variant="round" width={200} height={200} />
         </Stack>
-    ;
+    );
     
     if (error) return `Error! ${error.message}`;
 
