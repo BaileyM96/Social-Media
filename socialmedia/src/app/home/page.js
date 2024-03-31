@@ -4,25 +4,11 @@ import { apolloClient } from "../lib/apolloClient";
 import { StyledHomeContainer, StyledCard, StyledCardContent, StyledAvatar, StyledCardHeader, StyledCardActions } from "./home.styled";
 import IconButton  from "@mui/material/IconButton";
 import Favorite from "@mui/icons-material/Favorite";
-import { useQuery, gql } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import moment from "moment";
-import CircularProgress from '@mui/material/CircularProgress';
 import SpeedDial from "../Components/SpeedDial/page";
 import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
-
-const GET_FRIENDS_POSTS = gql`
-    query GetFriendsPosts($userId: ID!) {
-        friendsPosts(userId: $userId) {
-            author {
-                id
-                username
-            }
-            content
-            createdAt
-        }
-    }
-`;
+import { GET_FRIENDS_POSTS } from "../utils/query";
 
 
 export default function Home() {
@@ -58,15 +44,18 @@ export default function Home() {
 
     if (error) return `Error! ${error.message}`;
     
-    console.log(data)
+
+    const sortedPosts = data.friendsPosts ? [...data.friendsPosts].sort((a, b) => Number(b.createdAt) - Number(a.createdAt)) : [];
+
+
     return (
         <>
             <StyledHomeContainer>
-                {data.friendsPosts.map((posts) => (
+                {sortedPosts.map((posts) => (
                     <StyledCard key={posts.id}>
                         <StyledCardHeader 
                         title={posts.author.username} 
-                        subheader={moment(Number(posts.createdAt)).format("M-D-YY, h:mma")}
+                        subheader={moment(Number(posts.createdAt)).startOf("day").fromNow()}
                         avatar={<StyledAvatar>{posts.author.username[0]}</StyledAvatar>}
                         >
                         </StyledCardHeader>
