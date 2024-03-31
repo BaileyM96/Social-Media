@@ -4,23 +4,11 @@ import { apolloClient } from "../lib/apolloClient";
 import { StyledHomeContainer, StyledCard, StyledCardContent, StyledAvatar, StyledCardHeader, StyledCardActions } from "./home.styled";
 import IconButton  from "@mui/material/IconButton";
 import Favorite from "@mui/icons-material/Favorite";
-import { useQuery, gql } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import moment from "moment";
-import CircularProgress from '@mui/material/CircularProgress';
 import SpeedDial from "../Components/SpeedDial/page";
-
-const GET_FRIENDS_POSTS = gql`
-    query GetFriendsPosts($userId: ID!) {
-        friendsPosts(userId: $userId) {
-            author {
-                id
-                username
-            }
-            content
-            createdAt
-        }
-    }
-`;
+import Skeleton from "@mui/material/Skeleton";
+import { GET_FRIENDS_POSTS, GET_USER } from "../utils/query";
 
 
 export default function Home() {
@@ -31,17 +19,43 @@ export default function Home() {
         }
     });
 
-    if (loading) return <CircularProgress />;
+    if (loading) 
+    return (
+        <StyledHomeContainer>
+            {Array.from(new Array(5)).map((_, index) => (
+                <StyledCard key={index}>
+                    <StyledCardHeader 
+                        avatar={<Skeleton animation='wave' variant="circular" width={40} height={40} />}
+                        title={<Skeleton animation='wave' variant="text" width="40%" />}
+                        subheader={<Skeleton animation='wave' variant="text" width="20%" />}
+                    />
+                    <StyledCardContent>
+                        <Skeleton animation='wave' variant="text" />
+                        <Skeleton animation='wave' variant="text" />
+                        <Skeleton animation='wave' variant="text" width="60%" />
+                    </StyledCardContent>
+                    <StyledCardActions>
+                        <Skeleton animation='wave' variant="rectangular" width={48} height={48} /> 
+                    </StyledCardActions>
+                </StyledCard>
+            ))}
+        </StyledHomeContainer>
+    );
+
     if (error) return `Error! ${error.message}`;
+    
+
+    const sortedPosts = data.friendsPosts ? [...data.friendsPosts].sort((a, b) => Number(b.createdAt) - Number(a.createdAt)) : [];
+
 
     return (
         <>
             <StyledHomeContainer>
-                {data.friendsPosts.map((posts) => (
+                {sortedPosts.map((posts) => (
                     <StyledCard key={posts.id}>
                         <StyledCardHeader 
                         title={posts.author.username} 
-                        subheader={moment(Number(posts.createdAt)).format("M-D-YY, h:mma")}
+                        subheader={moment(Number(posts.createdAt)).startOf("day").fromNow()}
                         avatar={<StyledAvatar>{posts.author.username[0]}</StyledAvatar>}
                         >
                         </StyledCardHeader>
