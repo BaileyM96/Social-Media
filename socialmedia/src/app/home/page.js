@@ -8,7 +8,7 @@ import { useQuery } from "@apollo/client";
 import moment from "moment";
 import SpeedDial from "../Components/SpeedDial/page";
 import Skeleton from "@mui/material/Skeleton";
-import { GET_FRIENDS_POSTS } from "../utils/query";
+import { GET_FRIENDS_POSTS, GET_USER } from "../utils/query";
 
 
 export default function Home() {
