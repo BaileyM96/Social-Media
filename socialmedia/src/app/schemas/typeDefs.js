@@ -40,8 +40,9 @@ input CreateUserInput {
 }
 
 type Query {
-    user(email: String!): User
+    user(email: String): User
     friendsPosts(userId: ID!): [Post!]!
+    userPosts(userId: ID!): [Post!]!
 }
 
 type Auth {
