@@ -6,20 +6,6 @@ export const GET_USER = gql`
         user(email: $email) {
             id
             username
-            friends {
-                id
-                username
-            }
-            posts {
-                id
-                content
-                author {
-                    id
-                    username
-                }
-                createdAt
-                likes
-            } 
         }
     }
 `;

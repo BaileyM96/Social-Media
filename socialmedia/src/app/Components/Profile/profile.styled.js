@@ -52,7 +52,7 @@ padding-top: 12px;
 
 export const StyledPostsContainer = styled.section`
 display: grid;
-grid-template-columns: auto 1fr;
+/* grid-template-columns: auto 1fr; */
 gap: 10px;
 padding: 10px;
 border-bottom: 1px solid #e1e8ed;
@@ -71,6 +71,7 @@ margin-bottom: 5px;
 
 export const UserName = styled.span`
 font-weight: bold;
+color: #0f1419;
 `;
 
 export const StyledPostTime = styled.span`
@@ -78,6 +79,7 @@ color: #657786;
 `;
 
 export const PostText = styled.p`
+  color: #0f1419;
   margin: 0;
 `;
 

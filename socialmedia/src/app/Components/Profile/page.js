@@ -49,12 +49,13 @@ export default function Profile() {
         </StyledTopFriendsContainer>
 
         <StyledTopFriendsHeader>Posts</StyledTopFriendsHeader>
-        <StyledPostsContainer>
+        
             {sortedPosts.map((post) => (
+                <StyledPostsContainer>
                 <PostHeaderContainer key={post.id}>
                     <PostHeader>
                         <UserName>{post.author.username}</UserName>
-                        <StyledPostTime>{moment(Number(post.createdAt)).startOf("day").fromNow()}</StyledPostTime>
+                        <StyledPostTime>{moment(Number(post.createdAt)).fromNow()}</StyledPostTime>
                     </PostHeader>
                     <PostText>{post.content}</PostText>
                     <Actions>
@@ -62,8 +63,8 @@ export default function Profile() {
                         <span><ChatBubbleOutlineIcon /></span>
                     </Actions>
                 </PostHeaderContainer>
+                </StyledPostsContainer>
             ))}
-        </StyledPostsContainer>
         </>
     )
 }
