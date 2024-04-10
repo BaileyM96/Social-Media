@@ -38,8 +38,17 @@ const resolvers = {
         });
         return convertedPosts;
     },
-    
+    userPosts: async (_, { userId }) => {
+      try {
+        const posts = await Post.find({ author: userId }).populate('author');
+        console.log('posts', posts);
+        return posts;
+      } catch (error) {
+        console.error('Error fetching user posts', error);
+        throw new ApolloError('Failed to fetch user posts');
+      }
     },
+  },
     Mutation: {
         createUser: async(_, { input }) => {
           const { username, email, password } = input;
