@@ -7,7 +7,7 @@ PostHeader, UserName, StyledPostTime, PostText, Actions
 import { StyledAvatar } from "@/app/home/home.styled";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import { GET_USER_POSTS } from "@/app/utils/query";
+import { GET_USER_POSTS, GET_USER } from "@/app/utils/query";
 import { useQuery } from "@apollo/client";
 import { apolloClient } from "@/app/lib/apolloClient";
 import moment from "moment";
@@ -19,21 +19,34 @@ export default function Profile() {
             userId: '65d28475b8449265f68f9b4b'
         }
     });
+
+    const { loading: userLoading, error: userError, data: userData } = useQuery(GET_USER, {
+        client: apolloClient,
+        variables: {
+            email: 'baileymejia28@gmail.com'
+        }
+    });
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error... </p>;
+
+    if (userLoading) return <p>Loading...</p>;
+    if (userError) return <p>Error... </p>;
+
 
     const sortedPosts = data.userPosts ? [...data.userPosts].sort((a, b) => Number(b.createdAt) - Number(a.createdAt)) : [];
 
     return (
         <>
         <StyledProfileHeader>
-            <StyledProfileAvatar />
+            <StyledProfileAvatar>{userData.user.username[0]}</StyledProfileAvatar>
             <StyledEditProfileButton variant="outlined">Edit profile</StyledEditProfileButton>
         </StyledProfileHeader>
 
         <StyledUserInfoContainer>
-            <h2>Bailey</h2>
-            <p>Joined January 1 2024</p>
+            {console.log(userData.user.username)}
+            <h2>{userData.user.username}</h2>
+            <p>Joined {moment(Number(userData.user.createdAt)).format("MMMM YYYY")}</p>
         </StyledUserInfoContainer>
 
         <StyledTopFriendsHeader>Bailey's top 8</StyledTopFriendsHeader>

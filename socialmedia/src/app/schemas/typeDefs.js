@@ -10,6 +10,7 @@ type User {
     sentFriendRequest: [FriendRequest!]!
     receivedFriendRequest: [FriendRequest!]!
     posts: [Post!]!
+    createdAt: String!
 }
 
 type Post {
