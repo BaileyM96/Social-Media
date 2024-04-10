@@ -12,6 +12,7 @@ align-items: center;
 flex-direction: column;
 row-gap: 10px;
 padding: 2%;
+padding-bottom: 100px;
 `;
 
 export const StyledCard = styled(Card)`
