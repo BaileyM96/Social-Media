@@ -9,7 +9,8 @@ align-items: center;
 justify-content: space-around;
 padding-left: 12px;
 padding-right: 12px;
-padding-bottom: 12px;
+padding-bottom: 40px;
+padding-top: 40px;
 position: fixed;
 bottom: 0;
 z-index: 1;
@@ -17,6 +18,17 @@ text-align: center;
 background-color: white;
 width: 100%;
 height: 50px;
+border-top: 1px solid #e1e8ed;
+`;
+
+export const StyledSpan = styled.span`
+display: block;
+color: black;
+`;
+
+export const StyledIconsContainer = styled.div`
+display: flex;
+flex-direction: column;
 `;
 
 export const StyledHomeIcon = styled(HomeIcon)`

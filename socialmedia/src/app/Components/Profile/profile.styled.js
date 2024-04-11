@@ -89,3 +89,7 @@ export const Actions = styled.div`
   margin-top: 10px;
   color: #657786;
 `;
+
+export const StyledProfile = styled.div`
+margin-bottom: 25%;
+`;
