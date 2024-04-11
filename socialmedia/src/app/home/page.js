@@ -9,6 +9,7 @@ import moment from "moment";
 import SpeedDial from "../Components/SpeedDial/page";
 import Skeleton from "@mui/material/Skeleton";
 import { GET_FRIENDS_POSTS } from "../utils/query";
+import BottomNav from '../Components/BottomNavbar/bottomNav';
 
 
 export default function Home() {
@@ -71,7 +72,8 @@ export default function Home() {
                 ))}
             </StyledHomeContainer>
 
-            <SpeedDial />            
+            <SpeedDial />
+            <BottomNav />            
         </>
     )
 };

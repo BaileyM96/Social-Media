@@ -1,7 +1,8 @@
 'use client';
 import { StyledProfileHeader, StyledProfileAvatar, StyledEditProfileButton, StyledUserInfoContainer, 
 StyledTopFriendsContainer, StyledTopFriendsHeader, StyledPostsContainer, PostHeaderContainer, 
-PostHeader, UserName, StyledPostTime, PostText, Actions
+PostHeader, UserName, StyledPostTime, PostText, Actions,
+StyledProfile
 } from "./profile.styled"
 
 import { StyledAvatar } from "@/app/home/home.styled";
@@ -11,6 +12,7 @@ import { GET_USER_POSTS, GET_USER } from "@/app/utils/query";
 import { useQuery } from "@apollo/client";
 import { apolloClient } from "@/app/lib/apolloClient";
 import moment from "moment";
+import BottomNav from "../BottomNavbar/bottomNav";
 
 export default function Profile() {
     const { loading, error, data } = useQuery(GET_USER_POSTS, {
@@ -38,46 +40,49 @@ export default function Profile() {
 
     return (
         <>
-        <StyledProfileHeader>
-            <StyledProfileAvatar>{userData.user.username[0]}</StyledProfileAvatar>
-            <StyledEditProfileButton variant="outlined">Edit profile</StyledEditProfileButton>
-        </StyledProfileHeader>
+        <StyledProfile>
+            <StyledProfileHeader>
+                <StyledProfileAvatar>{userData.user.username[0]}</StyledProfileAvatar>
+                <StyledEditProfileButton variant="outlined">Edit profile</StyledEditProfileButton>
+            </StyledProfileHeader>
 
-        <StyledUserInfoContainer>
-            {console.log(userData.user.username)}
-            <h2>{userData.user.username}</h2>
-            <p>Joined {moment(Number(userData.user.createdAt)).format("MMMM YYYY")}</p>
-        </StyledUserInfoContainer>
+            <StyledUserInfoContainer>
+                {console.log(userData.user.username)}
+                <h2>{userData.user.username}</h2>
+                <p>Joined {moment(Number(userData.user.createdAt)).format("MMMM YYYY")}</p>
+            </StyledUserInfoContainer>
 
-        <StyledTopFriendsHeader>Bailey's top 8</StyledTopFriendsHeader>
-        <StyledTopFriendsContainer>
-            <StyledProfileAvatar />
-            <StyledProfileAvatar />
-            <StyledProfileAvatar />
-            <StyledProfileAvatar />
-            <StyledProfileAvatar />
-            <StyledProfileAvatar />
-            <StyledProfileAvatar />
-            <StyledProfileAvatar />
-        </StyledTopFriendsContainer>
+            <StyledTopFriendsHeader>Bailey's top 8</StyledTopFriendsHeader>
+            <StyledTopFriendsContainer>
+                <StyledProfileAvatar />
+                <StyledProfileAvatar />
+                <StyledProfileAvatar />
+                <StyledProfileAvatar />
+                <StyledProfileAvatar />
+                <StyledProfileAvatar />
+                <StyledProfileAvatar />
+                <StyledProfileAvatar />
+            </StyledTopFriendsContainer>
 
-        <StyledTopFriendsHeader>Posts</StyledTopFriendsHeader>
-        
-            {sortedPosts.map((post) => (
-                <StyledPostsContainer>
-                <PostHeaderContainer key={post.id}>
-                    <PostHeader>
-                        <UserName>{post.author.username}</UserName>
-                        <StyledPostTime>{moment(Number(post.createdAt)).fromNow()}</StyledPostTime>
-                    </PostHeader>
-                    <PostText>{post.content}</PostText>
-                    <Actions>
-                        <span><FavoriteBorderIcon /></span>
-                        <span><ChatBubbleOutlineIcon /></span>
-                    </Actions>
-                </PostHeaderContainer>
-                </StyledPostsContainer>
-            ))}
+            <StyledTopFriendsHeader>Posts</StyledTopFriendsHeader>
+            
+                {sortedPosts.map((post) => (
+                    <StyledPostsContainer>
+                    <PostHeaderContainer key={post.id}>
+                        <PostHeader>
+                            <UserName>{post.author.username}</UserName>
+                            <StyledPostTime>{moment(Number(post.createdAt)).fromNow()}</StyledPostTime>
+                        </PostHeader>
+                        <PostText>{post.content}</PostText>
+                        <Actions>
+                            <span><FavoriteBorderIcon /></span>
+                            <span><ChatBubbleOutlineIcon /></span>
+                        </Actions>
+                    </PostHeaderContainer>
+                    </StyledPostsContainer>
+                ))}
+        <BottomNav />
+        </StyledProfile>
         </>
     )
 }
