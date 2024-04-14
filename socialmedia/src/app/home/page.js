@@ -10,6 +10,19 @@ import SpeedDial from "../Components/SpeedDial/page";
 import Skeleton from "@mui/material/Skeleton";
 import { GET_FRIENDS_POSTS } from "../utils/query";
 import BottomNav from '../Components/BottomNavbar/bottomNav';
+import { 
+    StyledPostsContainer, 
+    PostHeaderContainer, 
+    PostHeader, 
+    UserName, 
+    StyledPostTime, 
+    PostText, 
+    Actions ,
+    StyledMainHome
+} from "../Components/Profile/profile.styled";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import { GET_USER_POSTS } from "../utils/query";
 
 
 export default function Home() {
@@ -19,6 +32,16 @@ export default function Home() {
             userId: '65d28475b8449265f68f9b4b'
         }
     });
+
+    const { loading: userLoading, error: userError, data: userData } = useQuery(GET_USER_POSTS, {
+        client: apolloClient,
+        variables: {
+            userId: '65d28475b8449265f68f9b4b'
+        }
+    });
+
+    if (userLoading) return <p>Loading...</p>;
+    if (userError) return <p>Error... </p>;
 
     if (loading) 
     return (
@@ -44,36 +67,36 @@ export default function Home() {
     );
 
     if (error) return `Error! ${error.message}`;
-    
 
-    const sortedPosts = data.friendsPosts ? [...data.friendsPosts].sort((a, b) => Number(b.createdAt) - Number(a.createdAt)) : [];
+    console.log('userData', userData);
+    
+    //NEED TO INTEGRATE YOUR OWN POSTS WITH FRIENDS POSTS TO DISPLAY BOTH ON THE HOMEPAGE
+    const sortedPosts = [...(data.friendsPosts || [] ), ...(userData.userPosts || [])].sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
+    console.log('sortedPosts', sortedPosts);
 
 
     return (
-        <>
-            <StyledHomeContainer>
-                {sortedPosts.map((posts) => (
-                    <StyledCard key={posts.id}>
-                        <StyledCardHeader 
-                        title={posts.author.username} 
-                        subheader={moment(Number(posts.createdAt)).startOf("day").fromNow()}
-                        avatar={<StyledAvatar>{posts.author.username[0]}</StyledAvatar>}
-                        >
-                        </StyledCardHeader>
-                        <StyledCardContent>
-                            {posts.content}
-                        </StyledCardContent>
-                        <StyledCardActions>
-                            <IconButton aria-label="add to favorites">
-                                <Favorite />
-                            </IconButton>
-                        </StyledCardActions>
-                    </StyledCard>
-                ))}
-            </StyledHomeContainer>
-
+        <> 
+        <StyledMainHome>
+            {sortedPosts.map((posts) => (
+                <StyledPostsContainer>
+                <PostHeaderContainer key={posts.id}>
+                    <PostHeader>
+                        <StyledAvatar>{posts.author.username[0]}</StyledAvatar>
+                        <UserName>{posts.author.username}</UserName>
+                        <StyledPostTime>{moment(Number(posts.createdAt)).fromNow()}</StyledPostTime>
+                    </PostHeader>
+                    <PostText>{posts.content}</PostText>
+                    <Actions>
+                        <span><FavoriteBorderIcon /></span>
+                        <span><ChatBubbleOutlineIcon /></span>
+                    </Actions>
+                </PostHeaderContainer>
+            </StyledPostsContainer>
+            ))}
+        </StyledMainHome> 
             <SpeedDial />
-            <BottomNav />            
+            <BottomNav />          
         </>
     )
 };

@@ -67,29 +67,37 @@ export const PostHeader = styled.div`
 display: flex;
 justify-content: space-between;
 margin-bottom: 5px;
+align-items: center;
 `;
 
 export const UserName = styled.span`
 font-weight: bold;
 color: #0f1419;
+padding-right: 40%;
 `;
 
 export const StyledPostTime = styled.span`
 color: #657786;
+font-size: 14px;
 `;
 
 export const PostText = styled.p`
   color: #0f1419;
-  margin: 0;
+  margin-left: 16%;
 `;
 
 export const Actions = styled.div`
   display: flex;
-  justify-content: space-around;
-  margin-top: 10px;
+  justify-content: space-evenly;
+  margin-top: 5%;
   color: #657786;
+  margin-right: 40%;
 `;
 
 export const StyledProfile = styled.div`
 margin-bottom: 25%;
+`;
+
+export const StyledMainHome = styled.div`
+padding-bottom: 100px;
 `;
