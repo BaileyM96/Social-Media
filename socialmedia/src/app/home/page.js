@@ -2,8 +2,6 @@
 import React from "react";
 import { apolloClient } from "../lib/apolloClient";
 import { StyledHomeContainer, StyledCard, StyledCardContent, StyledAvatar, StyledCardHeader, StyledCardActions } from "./home.styled";
-import IconButton  from "@mui/material/IconButton";
-import Favorite from "@mui/icons-material/Favorite";
 import { useQuery } from "@apollo/client";
 import moment from "moment";
 import SpeedDial from "../Components/SpeedDial/page";
@@ -18,7 +16,11 @@ import {
     StyledPostTime, 
     PostText, 
     Actions ,
-    StyledMainHome
+    StyledMainHome,
+    StyledSpan,
+    StyledSpanLikes,
+    StyledLikes,
+    StyledComments
 } from "../Components/Profile/profile.styled";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -68,12 +70,7 @@ export default function Home() {
 
     if (error) return `Error! ${error.message}`;
 
-    console.log('userData', userData);
-    
-    //NEED TO INTEGRATE YOUR OWN POSTS WITH FRIENDS POSTS TO DISPLAY BOTH ON THE HOMEPAGE
     const sortedPosts = [...(data.friendsPosts || [] ), ...(userData.userPosts || [])].sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
-    console.log('sortedPosts', sortedPosts);
-
 
     return (
         <> 
@@ -88,8 +85,14 @@ export default function Home() {
                     </PostHeader>
                     <PostText>{posts.content}</PostText>
                     <Actions>
-                        <span><FavoriteBorderIcon /></span>
-                        <span><ChatBubbleOutlineIcon /></span>
+                        <StyledSpan>
+                            <StyledLikes />
+                            <StyledSpanLikes>23</StyledSpanLikes>
+                        </StyledSpan>
+                        <StyledSpan>
+                            <StyledComments />
+                            <StyledSpanLikes>223</StyledSpanLikes>
+                        </StyledSpan>
                     </Actions>
                 </PostHeaderContainer>
             </StyledPostsContainer>

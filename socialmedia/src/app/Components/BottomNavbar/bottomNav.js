@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { StyledHomeIcon, StyledNavContainer, StyledPersonIcon, StyledSearchIcon, StyledSpan } from './bottomNav.styled';
+import { StyledHomeIcon, StyledNavContainer, StyledPersonIcon, StyledSearchIcon, StyledSpan, StyledChatBubbleOutlineIcon } from './bottomNav.styled';
 
 export default function BottomNav() {
     return (
@@ -12,6 +12,10 @@ export default function BottomNav() {
             <Link href="/search">
                 <StyledSearchIcon />
                 <StyledSpan>Search</StyledSpan>
+            </Link>
+            <Link href="/Components/Profile">
+                <StyledChatBubbleOutlineIcon />
+                <StyledSpan>Message</StyledSpan>
             </Link>
             <Link href="/Components/Profile">
                 <StyledPersonIcon />
