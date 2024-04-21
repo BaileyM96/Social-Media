@@ -7,3 +7,12 @@ export const CREATE_POST = gql`
         }
     }
 `;
+
+export const LIKE_POST = gql`
+    mutation likedPost($postId: ID!) {
+        likedPost(postId: $postId) {
+            id
+            likes
+        }
+    }
+`;

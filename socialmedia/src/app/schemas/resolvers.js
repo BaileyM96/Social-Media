@@ -33,7 +33,7 @@ const resolvers = {
             delete postObject._id;
             delete postObject.__v; 
     
-            postObject.likes = postObject.likes.map(like => like.toString());
+            // postObject.likes = postObject.likes.map(like => like.toString());
             return postObject;
         });
         return convertedPosts;
@@ -183,31 +183,37 @@ const resolvers = {
           
           return newPost;
         },
-        likedPost: async (_, { postId, userId }) => {
+        //Need to change the mutation to store an integer value for likes
+        likedPost: async (_, { postId }) => {
           const post = await Post.findById(postId);
-          const user = await User.findById(userId);
+          // const user = await User.findById(userId);
            
           if(!post) {
             throw new Error('Cannot find post');
           }
 
-          await Post.findByIdAndUpdate(post, {
-            $push: { likes: user }
-          });
+          //Need to increment the likes by 1
+          post.likes = post.likes += 1;
+          console.log('post', post);
+          await post.save();
+
+          // await Post.findByIdAndUpdate(post, {
+          //   $push: { likes: user }
+          // });
           return post;
         },
-        unlikePost: async (_,{ postId, userId }) => {
+        unlikePost: async (_,{ postId }) => {
           const post = await Post.findById(postId);
-          const user = await User.findById(userId);
+          // const user = await User.findById(userId);
         
           if (!post) {
             throw new Error('Cannot find post')
           };
 
-          await Post.findByIdAndUpdate(postId, {
-            $pull: { likes: userId }
-          });
-
+          post.likes = post.likes > 0 ? post.likes -= 1 : 0;
+          // await Post.findByIdAndUpdate(postId, {
+          //   $pull: { likes: userId }
+          // });
           await post.save();
           return post;
         } 

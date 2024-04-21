@@ -1,12 +1,13 @@
 'use client';
-import React from "react";
+import React, { useState } from "react";
 import { apolloClient } from "../lib/apolloClient";
 import { StyledHomeContainer, StyledCard, StyledCardContent, StyledAvatar, StyledCardHeader, StyledCardActions } from "./home.styled";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import moment from "moment";
 import SpeedDial from "../Components/SpeedDial/page";
 import Skeleton from "@mui/material/Skeleton";
 import { GET_FRIENDS_POSTS } from "../utils/query";
+import { LIKE_POST } from "../utils/mutations";
 import BottomNav from '../Components/BottomNavbar/bottomNav';
 import { 
     StyledPostsContainer, 
@@ -22,12 +23,12 @@ import {
     StyledLikes,
     StyledComments
 } from "../Components/Profile/profile.styled";
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { GET_USER_POSTS } from "../utils/query";
 
-
+//need to add liking mutation to this page so I can like posts
 export default function Home() {
+    const [like, setLike] = useState(false);
+
     const { loading, error, data } = useQuery(GET_FRIENDS_POSTS, {
         client: apolloClient,
         variables: {
@@ -41,6 +42,24 @@ export default function Home() {
             userId: '65d28475b8449265f68f9b4b'
         }
     });
+
+    const [likePost] = useMutation(LIKE_POST, {
+        client: apolloClient,
+    });
+
+    const handleLike = async (postId) => {
+        console.log('startLikes')
+        try {
+            await likePost({
+                variables: {
+                    postId: postId
+                }
+            });
+            setLike(true);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     if (userLoading) return <p>Loading...</p>;
     if (userError) return <p>Error... </p>;
@@ -69,9 +88,8 @@ export default function Home() {
     );
 
     if (error) return `Error! ${error.message}`;
-
     const sortedPosts = [...(data.friendsPosts || [] ), ...(userData.userPosts || [])].sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
-
+    console.log('sortedPosts', sortedPosts);   
     return (
         <> 
         <StyledMainHome>
@@ -87,7 +105,7 @@ export default function Home() {
                     <Actions>
                         <StyledSpan>
                             <StyledLikes />
-                            <StyledSpanLikes>23</StyledSpanLikes>
+                            <StyledSpanLikes onClick={handleLike}>{posts.likes}</StyledSpanLikes>
                         </StyledSpan>
                         <StyledSpan>
                             <StyledComments />

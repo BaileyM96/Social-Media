@@ -16,10 +16,10 @@ const postSchema = new Schema({
         default: Date.now,
         required: true
     },
-    likes: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    }],
+    likes: {
+        type: Number,
+        default: 0,
+    },
 }, {
     timestamps: true,
 });

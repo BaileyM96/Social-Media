@@ -20,6 +20,7 @@ export const GET_FRIENDS_POSTS = gql`
             }
             content
             createdAt
+            likes
         }
     }
 `;
