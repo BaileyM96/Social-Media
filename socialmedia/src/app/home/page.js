@@ -7,7 +7,7 @@ import moment from "moment";
 import SpeedDial from "../Components/SpeedDial/page";
 import Skeleton from "@mui/material/Skeleton";
 import { GET_FRIENDS_POSTS } from "../utils/query";
-import { LIKE_POST } from "../utils/mutations";
+import { LIKE_POST, UNLIKE_POST } from "../utils/mutations";
 import BottomNav from '../Components/BottomNavbar/bottomNav';
 import { 
     StyledPostsContainer, 
@@ -28,6 +28,7 @@ import { GET_USER_POSTS } from "../utils/query";
 //need to add liking mutation to this page so I can like posts
 export default function Home() {
     const [like, setLike] = useState(false);
+    const [unLike, setUnLike] = useState(false);
 
     const { loading, error, data } = useQuery(GET_FRIENDS_POSTS, {
         client: apolloClient,
@@ -43,14 +44,19 @@ export default function Home() {
         }
     });
 
-    const [likePost] = useMutation(LIKE_POST, {
+    const [likedPost] = useMutation(LIKE_POST, {
+        client: apolloClient,
+    });
+
+    const [unlikedPost] = useMutation(UNLIKE_POST, {
         client: apolloClient,
     });
 
     const handleLike = async (postId) => {
+        console.log('postId', postId);
         console.log('startLikes')
         try {
-            await likePost({
+            await likedPost({
                 variables: {
                     postId: postId
                 }
@@ -60,6 +66,19 @@ export default function Home() {
             console.error(error);
         }
     };
+
+    const handleUnLike = async (postId) => {
+        try {
+            await unlikedPost({
+                variables: {
+                    postId: postId
+                }
+            });
+            setUnLike(true);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     if (userLoading) return <p>Loading...</p>;
     if (userError) return <p>Error... </p>;
@@ -105,7 +124,7 @@ export default function Home() {
                     <Actions>
                         <StyledSpan>
                             <StyledLikes />
-                            <StyledSpanLikes onClick={handleLike}>{posts.likes}</StyledSpanLikes>
+                            <StyledSpanLikes onClick={() => handleLike(posts.id)}>{posts.likes}</StyledSpanLikes>
                         </StyledSpan>
                         <StyledSpan>
                             <StyledComments />

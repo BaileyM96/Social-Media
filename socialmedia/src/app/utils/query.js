@@ -18,6 +18,7 @@ export const GET_FRIENDS_POSTS = gql`
                 id
                 username
             }
+            id
             content
             createdAt
             likes
@@ -31,6 +32,7 @@ export const GET_USER_POSTS = gql`
             author {
                 username
             }
+            id
             content
             createdAt
         }
