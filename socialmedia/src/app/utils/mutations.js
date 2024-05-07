@@ -9,19 +9,25 @@ export const CREATE_POST = gql`
 `;
 
 export const LIKE_POST = gql`
-    mutation likedPost($postId: ID!) {
-        likedPost(postId: $postId) {
+    mutation likedPost($postId: ID!, $userId: ID!) {
+        likedPost(postId: $postId, userId: $userId) {
             id
             likes
+            likedBy {
+                id
+            }
         }
     }
 `;
 
 export const UNLIKE_POST = gql`
-    mutation unlikePost($postId: ID!) {
-        unlikePost(postId: $postId) {
+    mutation unlikePost($postId: ID!, $userId: ID!) {
+        unlikePost(postId: $postId, userId: $userId) {
             id
             likes
+            likedBy {
+                id
+            }
         }
     }
 `;

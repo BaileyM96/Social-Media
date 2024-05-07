@@ -19,6 +19,7 @@ type Post {
     author: User
     createdAt: String!
     likes: Int
+    likedBy: [User!]!
 }
 
 type FriendRequest {
@@ -58,8 +59,8 @@ type Mutation {
     acceptFriendRequest(requestId: ID!): FriendRequest!
     rejectFriendRequest(requestId: ID!): FriendRequest!
     createPost(content: String!, authorId: ID!): Post!
-    likedPost(postId: ID!): Post
-    unlikePost(postId: ID!): Post
+    likedPost(postId: ID!, userId: ID!): Post
+    unlikePost(postId: ID!, userId: ID!): Post
 }
 `;
 

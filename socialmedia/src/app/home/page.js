@@ -27,8 +27,7 @@ import { GET_USER_POSTS } from "../utils/query";
 
 //need to add liking mutation to this page so I can like posts
 export default function Home() {
-    const [like, setLike] = useState(false);
-    const [unLike, setUnLike] = useState(false);
+    const [hasLiked, setHasLiked] = useState(false);
 
     const { loading, error, data } = useQuery(GET_FRIENDS_POSTS, {
         client: apolloClient,
@@ -44,41 +43,47 @@ export default function Home() {
         }
     });
 
+    
+
     const [likedPost] = useMutation(LIKE_POST, {
         client: apolloClient,
+        variables: {
+            userId: '65d28475b8449265f68f9b4b'
+        }
     });
 
     const [unlikedPost] = useMutation(UNLIKE_POST, {
         client: apolloClient,
+        variables: {
+            userId: '65d28475b8449265f68f9b4b'
+        }
     });
 
     const handleLike = async (postId) => {
-        console.log('postId', postId);
-        console.log('startLikes')
-        try {
-            await likedPost({
-                variables: {
-                    postId: postId
-                }
-            });
-            setLike(true);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const handleUnLike = async (postId) => {
+       if (hasLiked) {
         try {
             await unlikedPost({
                 variables: {
                     postId: postId
                 }
             });
-            setUnLike(true);
+            setHasLiked(false);
         } catch (error) {
             console.error(error);
         }
-    }
+       } else {
+        try {
+            await likedPost({
+                variables: {
+                    postId: postId
+                }
+            });
+            setHasLiked(true);
+        } catch (error) {
+            console.error(error);
+       }
+    };
+}
 
     if (userLoading) return <p>Loading...</p>;
     if (userError) return <p>Error... </p>;

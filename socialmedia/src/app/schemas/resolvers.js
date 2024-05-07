@@ -183,37 +183,48 @@ const resolvers = {
           
           return newPost;
         },
-        //Need to change the mutation to store an integer value for likes
-        likedPost: async (_, { postId }) => {
+        
+        likedPost: async (_, { postId, userId }) => {
           const post = await Post.findById(postId);
-          // const user = await User.findById(userId);
+          const user = await User.findById(userId);
            
           if(!post) {
             throw new Error('Cannot find post');
           }
 
-          //Need to increment the likes by 1
+         const hasLikedPost = post.likedBy.includes(user.id);
+
+         if (hasLikedPost) {
+           throw new Error('You have already liked this post');
+         }
+
           post.likes = post.likes += 1;
-          console.log('post', post);
           await post.save();
 
-          // await Post.findByIdAndUpdate(post, {
-          //   $push: { likes: user }
-          // });
+          await Post.findByIdAndUpdate(post, {
+            $push: { likedBy: user }
+          });
+
           return post;
         },
-        unlikePost: async (_,{ postId }) => {
+        unlikePost: async (_,{ postId, userId }) => {
           const post = await Post.findById(postId);
-          // const user = await User.findById(userId);
+          const user = await User.findById(userId);
         
           if (!post) {
             throw new Error('Cannot find post')
           };
 
           post.likes = post.likes > 0 ? post.likes -= 1 : 0;
+          
+          //I need to make sure to remove the object id from the likedBy array
+          await post.likedBy.pull(user);
           // await Post.findByIdAndUpdate(postId, {
-          //   $pull: { likes: userId }
+          //   $pull: { likedBy: user }
           // });
+
+          console.log('posts', post)
+
           await post.save();
           return post;
         } 

@@ -35,6 +35,9 @@ export const GET_USER_POSTS = gql`
             id
             content
             createdAt
+            likedBy {
+                id
+            }   
         }
     }
 `;
