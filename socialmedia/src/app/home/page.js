@@ -21,12 +21,15 @@ import {
     StyledSpan,
     StyledSpanLikes,
     StyledLikes,
-    StyledComments
+    StyledComments,
+    StyledLiked
 } from "../Components/Profile/profile.styled";
 import { GET_USER_POSTS } from "../utils/query";
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
-//need to add liking mutation to this page so I can like posts
+
 export default function Home() {
+    //THERE SEEMS TO BE A BUG WITH THE STATE OF THE LIKE BUTTON
     const [hasLiked, setHasLiked] = useState(false);
 
     const { loading, error, data } = useQuery(GET_FRIENDS_POSTS, {
@@ -59,6 +62,7 @@ export default function Home() {
         }
     });
 
+    //THE STATE DOES NOT CHANGE WHEN THE THE POST HAS ALREADY BEEN LIKED
     const handleLike = async (postId) => {
        if (hasLiked) {
         try {
@@ -127,8 +131,9 @@ export default function Home() {
                     </PostHeader>
                     <PostText>{posts.content}</PostText>
                     <Actions>
-                        <StyledSpan>
-                            <StyledLikes />
+                        <StyledSpan onClick={() => handleLike(posts.id)}>
+                            {hasLiked ? <StyledLiked /> : <StyledLikes />}
+                            {/* <StyledLikes /> */}
                             <StyledSpanLikes onClick={() => handleLike(posts.id)}>{posts.likes}</StyledSpanLikes>
                         </StyledSpan>
                         <StyledSpan>
