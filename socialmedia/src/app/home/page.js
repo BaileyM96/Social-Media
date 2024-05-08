@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { apolloClient } from "../lib/apolloClient";
 import { StyledHomeContainer, StyledCard, StyledCardContent, StyledAvatar, StyledCardHeader, StyledCardActions } from "./home.styled";
 import { useMutation, useQuery } from "@apollo/client";
@@ -25,12 +25,12 @@ import {
     StyledLiked
 } from "../Components/Profile/profile.styled";
 import { GET_USER_POSTS } from "../utils/query";
-import FavoriteIcon from '@mui/icons-material/Favorite';
 
 
 export default function Home() {
-    //THERE SEEMS TO BE A BUG WITH THE STATE OF THE LIKE BUTTON
+    
     const [hasLiked, setHasLiked] = useState(false);
+    console.log('hasLiked 1', hasLiked);
 
     const { loading, error, data } = useQuery(GET_FRIENDS_POSTS, {
         client: apolloClient,
@@ -62,13 +62,13 @@ export default function Home() {
         }
     });
 
-    //THE STATE DOES NOT CHANGE WHEN THE THE POST HAS ALREADY BEEN LIKED
     const handleLike = async (postId) => {
+        console.log('hasLiked 2', hasLiked);   
        if (hasLiked) {
         try {
             await unlikedPost({
                 variables: {
-                    postId: postId
+                    postId: postId,
                 }
             });
             setHasLiked(false);
@@ -79,7 +79,7 @@ export default function Home() {
         try {
             await likedPost({
                 variables: {
-                    postId: postId
+                    postId: postId,
                 }
             });
             setHasLiked(true);
