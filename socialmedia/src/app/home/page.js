@@ -1,12 +1,13 @@
 'use client';
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { apolloClient } from "../lib/apolloClient";
 import { StyledHomeContainer, StyledCard, StyledCardContent, StyledAvatar, StyledCardHeader, StyledCardActions } from "./home.styled";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import moment from "moment";
 import SpeedDial from "../Components/SpeedDial/page";
 import Skeleton from "@mui/material/Skeleton";
 import { GET_FRIENDS_POSTS } from "../utils/query";
+import { LIKE_POST, UNLIKE_POST } from "../utils/mutations";
 import BottomNav from '../Components/BottomNavbar/bottomNav';
 import { 
     StyledPostsContainer, 
@@ -20,14 +21,16 @@ import {
     StyledSpan,
     StyledSpanLikes,
     StyledLikes,
-    StyledComments
+    StyledComments,
+    StyledLiked
 } from "../Components/Profile/profile.styled";
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { GET_USER_POSTS } from "../utils/query";
 
 
 export default function Home() {
+    const [hasLiked, setHasLiked] = useState(window.localStorage.getItem('userLikedPosts'));
+    
+
     const { loading, error, data } = useQuery(GET_FRIENDS_POSTS, {
         client: apolloClient,
         variables: {
@@ -41,6 +44,52 @@ export default function Home() {
             userId: '65d28475b8449265f68f9b4b'
         }
     });
+
+    useEffect(() => {
+        window.localStorage.setItem('userLikedPosts', JSON.stringify(hasLiked));
+    }, [hasLiked])
+
+   
+
+    const [likedPost] = useMutation(LIKE_POST, {
+        client: apolloClient,
+        variables: {
+            userId: '65d28475b8449265f68f9b4b'
+        }
+    });
+
+    const [unlikedPost] = useMutation(UNLIKE_POST, {
+        client: apolloClient,
+        variables: {
+            userId: '65d28475b8449265f68f9b4b'
+        }
+    });
+
+    const handleLike = async (postId) => {   
+       if (hasLiked) {
+        try {
+            await unlikedPost({
+                variables: {
+                    postId: postId,
+                }
+            });
+            setHasLiked(false);
+        } catch (error) {
+            console.error(error);
+        }
+       } else {
+        try {
+            await likedPost({
+                variables: {
+                    postId: postId,
+                }
+            });
+            setHasLiked(true);
+        } catch (error) {
+            console.error(error);
+       }
+    };
+}
 
     if (userLoading) return <p>Loading...</p>;
     if (userError) return <p>Error... </p>;
@@ -69,9 +118,8 @@ export default function Home() {
     );
 
     if (error) return `Error! ${error.message}`;
-
     const sortedPosts = [...(data.friendsPosts || [] ), ...(userData.userPosts || [])].sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
-
+    console.log('sortedPosts', sortedPosts);   
     return (
         <> 
         <StyledMainHome>
@@ -85,9 +133,9 @@ export default function Home() {
                     </PostHeader>
                     <PostText>{posts.content}</PostText>
                     <Actions>
-                        <StyledSpan>
-                            <StyledLikes />
-                            <StyledSpanLikes>23</StyledSpanLikes>
+                        <StyledSpan onClick={() => handleLike(posts.id)}>
+                            {hasLiked ? <StyledLiked /> : <StyledLikes />}
+                            <StyledSpanLikes onClick={() => handleLike(posts.id)}>{posts.likes}</StyledSpanLikes>
                         </StyledSpan>
                         <StyledSpan>
                             <StyledComments />

@@ -3,6 +3,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 export const StyledProfileHeader = styled.div`
 display: flex;
@@ -117,6 +118,10 @@ font-size: 14px;
 `;
 
 export const StyledLikes = styled(FavoriteBorderIcon)`
+font-size: 18px !important;
+`;
+
+export const StyledLiked = styled(FavoriteIcon)`
 font-size: 18px !important;
 `;
 

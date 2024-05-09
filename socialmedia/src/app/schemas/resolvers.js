@@ -33,7 +33,7 @@ const resolvers = {
             delete postObject._id;
             delete postObject.__v; 
     
-            postObject.likes = postObject.likes.map(like => like.toString());
+            // postObject.likes = postObject.likes.map(like => like.toString());
             return postObject;
         });
         return convertedPosts;
@@ -183,6 +183,7 @@ const resolvers = {
           
           return newPost;
         },
+        
         likedPost: async (_, { postId, userId }) => {
           const post = await Post.findById(postId);
           const user = await User.findById(userId);
@@ -191,9 +192,19 @@ const resolvers = {
             throw new Error('Cannot find post');
           }
 
+         const hasLikedPost = post.likedBy.includes(user.id);
+
+         if (hasLikedPost) {
+           throw new Error('You have already liked this post');
+         }
+
+          post.likes = post.likes += 1;
+          await post.save();
+
           await Post.findByIdAndUpdate(post, {
-            $push: { likes: user }
+            $push: { likedBy: user }
           });
+
           return post;
         },
         unlikePost: async (_,{ postId, userId }) => {
@@ -204,9 +215,15 @@ const resolvers = {
             throw new Error('Cannot find post')
           };
 
-          await Post.findByIdAndUpdate(postId, {
-            $pull: { likes: userId }
-          });
+          post.likes = post.likes > 0 ? post.likes -= 1 : 0;
+          
+          //I need to make sure to remove the object id from the likedBy array
+          await post.likedBy.pull(user);
+          // await Post.findByIdAndUpdate(postId, {
+          //   $pull: { likedBy: user }
+          // });
+
+          console.log('posts', post)
 
           await post.save();
           return post;

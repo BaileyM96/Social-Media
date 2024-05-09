@@ -18,7 +18,8 @@ type Post {
     content: String!
     author: User
     createdAt: String!
-    likes: Int!
+    likes: Int
+    likedBy: [User!]!
 }
 
 type FriendRequest {
