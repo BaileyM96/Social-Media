@@ -28,9 +28,8 @@ import { GET_USER_POSTS } from "../utils/query";
 
 
 export default function Home() {
+    const [hasLiked, setHasLiked] = useState(window.localStorage.getItem('userLikedPosts'));
     
-    const [hasLiked, setHasLiked] = useState(false);
-    console.log('hasLiked 1', hasLiked);
 
     const { loading, error, data } = useQuery(GET_FRIENDS_POSTS, {
         client: apolloClient,
@@ -46,7 +45,11 @@ export default function Home() {
         }
     });
 
-    
+    useEffect(() => {
+        window.localStorage.setItem('userLikedPosts', JSON.stringify(hasLiked));
+    }, [hasLiked])
+
+   
 
     const [likedPost] = useMutation(LIKE_POST, {
         client: apolloClient,
