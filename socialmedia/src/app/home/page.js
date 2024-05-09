@@ -65,8 +65,7 @@ export default function Home() {
         }
     });
 
-    const handleLike = async (postId) => {
-        console.log('hasLiked 2', hasLiked);   
+    const handleLike = async (postId) => {   
        if (hasLiked) {
         try {
             await unlikedPost({
@@ -136,7 +135,6 @@ export default function Home() {
                     <Actions>
                         <StyledSpan onClick={() => handleLike(posts.id)}>
                             {hasLiked ? <StyledLiked /> : <StyledLikes />}
-                            {/* <StyledLikes /> */}
                             <StyledSpanLikes onClick={() => handleLike(posts.id)}>{posts.likes}</StyledSpanLikes>
                         </StyledSpan>
                         <StyledSpan>
