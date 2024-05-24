@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { SearchHeader, StyledHeaderItems, StyledSearchIcon, SearchWrapper } from "./search.styled";
+import { SearchHeader, StyledHeaderItems, StyledSearchIcon, SearchWrapper, StyledInputBase } from "./search.styled";
 import { StyledAvatar } from "../home/home.styled";
 
 export default function Search() {
@@ -11,6 +11,7 @@ export default function Search() {
                 <StyledAvatar />
                 <SearchWrapper>
                     <StyledSearchIcon />
+                    <StyledInputBase placeholder="Search" />
                 </SearchWrapper>
             </StyledHeaderItems>
         </SearchHeader>
