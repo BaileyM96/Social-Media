@@ -3,7 +3,6 @@ const { AuthenticationError, UserInputError, ApolloError } = require('apollo-ser
 const bcrypt = require('bcryptjs');
 const { signToken } = require('../utils/auth');
 const jwt = require('jsonwebtoken');
-const { create } = require('../models/friendRequest');
 
 const emailValidation = (email) => {
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -17,9 +16,9 @@ const passwordValidation = (password) => {
 }
 const resolvers = {
     Query: {
-      user: async (_, { email }, context) => {
+      user: async (_, { username }, context) => {
   
-        const user = await User.findOne({ email: email }).populate('sentFriendRequest');
+        const user = await User.findOne({ username: username }).populate('sentFriendRequest');
         return user;
       },
       friendsPosts: async (_, { userId }) => {
@@ -33,7 +32,6 @@ const resolvers = {
             delete postObject._id;
             delete postObject.__v; 
     
-            // postObject.likes = postObject.likes.map(like => like.toString());
             return postObject;
         });
         return convertedPosts;

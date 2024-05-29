@@ -42,7 +42,7 @@ input CreateUserInput {
 }
 
 type Query {
-    user(email: String): User
+    user(username: String!): User
     friendsPosts(userId: ID!): [Post!]!
     userPosts(userId: ID!): [Post!]!
 }
