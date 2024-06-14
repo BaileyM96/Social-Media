@@ -1,10 +1,11 @@
 'use client'
 import React, { useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery, useLazyQuery } from "@apollo/client";
 import { apolloClient } from "../lib/apolloClient";
 import { SearchHeader, StyledHeaderItems, StyledSearchIcon, SearchWrapper, StyledInputBase } from "./search.styled";
 import { StyledAvatar } from "../home/home.styled";
 import { GET_USER } from "../utils/query";
+import { useRouter } from "next/navigation";
 
 //Need to allow user to input users search name
  //This needs to be able to track state of input
@@ -22,37 +23,30 @@ import { GET_USER } from "../utils/query";
 
 export default function Search() {
     //This is what we return when we search for a user
-    // const { data, loading, error } = useQuery(GET_USER, {
-    //     client: apolloClient,
-    //     variables: { username: "Daisy" }
-    // });
+    const [search, setSearch] = useState('');
 
-    const [search, setSearch] = useState({
-        search: ''
+    const [getUser, { data, loading, error }] = useLazyQuery(GET_USER, {
+        client: apolloClient,
+        
     });
 
+
+    const router = useRouter();
+
     const handleSearchInput = (e) => {
-        setSearch({ search: e.target.value });
+        setSearch( e.target.value )
     }
 
     const handleSearchProfile = async (e) => {
         e.preventDefault();
-        try {
-            await search({
-                variables: {
-                    username: search.username
-                }
-            })
-            setSearch({ search: '' });
-        } catch (error) {
-            console.error('Error searching for user', error)
-        }
-        
+        getUser({
+            variables: { search } 
+        })
     }
 
-    // if (loading) return <p>Loading...</p>;
-    // if (error) return <p>Error: {error.message}</p>;
-    // console.log(data);
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error.message}</p>;
+    console.log(data);
     return (
         <>
         <SearchHeader>
@@ -60,7 +54,8 @@ export default function Search() {
                 <StyledAvatar />
                 <SearchWrapper> 
                     <StyledSearchIcon />
-                    <StyledInputBase placeholder="Search"onChange={handleSearchInput} />
+                    <StyledInputBase placeholder="Search" value={search} onChange={handleSearchInput} />
+                    <button onClick={handleSearchProfile}>Search</button>
                 </SearchWrapper>
             </StyledHeaderItems>
         </SearchHeader>

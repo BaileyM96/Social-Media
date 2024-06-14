@@ -24,9 +24,6 @@ export default function Profile() {
 
     const { loading: userLoading, error: userError, data: userData } = useQuery(GET_USER, {
         client: apolloClient,
-        variables: {
-            email: 'baileymejia28@gmail.com'
-        }
     });
 
     if (loading) return <p>Loading...</p>;
