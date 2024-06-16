@@ -25,11 +25,12 @@ import {
     StyledLiked
 } from "../Components/Profile/profile.styled";
 import { GET_USER_POSTS } from "../utils/query";
+import Auth from "../utils/frontEnd.auth";
 
 
 export default function Home() {
     const [hasLiked, setHasLiked] = useState(window.localStorage.getItem('userLikedPosts'));
-    
+    Auth.loggedIn();
 
     const { loading, error, data } = useQuery(GET_FRIENDS_POSTS, {
         client: apolloClient,
@@ -119,7 +120,7 @@ export default function Home() {
 
     if (error) return `Error! ${error.message}`;
     const sortedPosts = [...(data.friendsPosts || [] ), ...(userData.userPosts || [])].sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
-    console.log('sortedPosts', sortedPosts);   
+      
     return (
         <> 
         <StyledMainHome>

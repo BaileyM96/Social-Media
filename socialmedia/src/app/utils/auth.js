@@ -1,4 +1,6 @@
+const { red } = require('@mui/material/colors');
 const jwt = require('jsonwebtoken');
+const { redirect } = require('next/dist/server/api-utils');
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const expiration = '2h';
@@ -17,7 +19,7 @@ module.exports = {
             const { data } = jwt.verify(token, JWT_SECRET);
             req.user = data;
         } catch (error) {
-            console.log('Invalid Token:', error.message);
+            console.error('Invalid Token:', error.message);
         }
         return context;
     },
