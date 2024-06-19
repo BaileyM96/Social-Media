@@ -1,23 +1,30 @@
 'use client';
 import { useState } from "react";
 import { StyledCardContainer, StyledCard, StyledCardContent, StyledLogout, StyledCancel } from "./logout.styled";
-export default function Logout() {
-    //Design a card that will be on the screen
-    //This card should have two buttons, Logout & Cancel
-    //There should be a message that that says Signout of your account?
+import { useRouter } from "next/navigation";
 
-    //When you logout, the page should refresh and redirect to the login page
-    //When you click cancel, the page should redirect to the home page
+export default function Logout() {
     const [logout, setLogout] = useState(false);
     const [cancel, setCancel] = useState(false);
+
+    const router = useRouter();
+
+    const handleLogout = () => {
+        setLogout(true);
+        router.push('/login');
+    }
+     const handleCancel = () => {
+        setCancel(true);
+        router.push('/home');
+     }
 
     return (
         <>
         <StyledCardContainer>
             <StyledCard>
-                <StyledCardContent>Signout of your account?</StyledCardContent>
-                <StyledLogout>Logout</StyledLogout>
-                <StyledCancel>Cancel</StyledCancel>
+                <StyledCardContent>Logout of your account?</StyledCardContent>
+                <StyledLogout onClick={handleLogout}>Logout</StyledLogout>
+                <StyledCancel onClick={handleCancel}>Cancel</StyledCancel>
             </StyledCard>
         </StyledCardContainer>
         </>
