@@ -1,7 +1,10 @@
 import Link from 'next/link';
-import { StyledHomeIcon, StyledNavContainer, StyledPersonIcon, StyledSearchIcon, StyledSpan, StyledChatBubbleOutlineIcon } from './bottomNav.styled';
+import { useState } from 'react';
+import { StyledHomeIcon, StyledNavContainer, StyledPersonIcon, StyledSearchIcon, StyledSpan, StyledChatBubbleOutlineIcon, StyledAvatarIcon, StyledSubMenu, StyledText } from './bottomNav.styled';
+
 
 export default function BottomNav() {
+    
     return (
         <>
         <StyledNavContainer>
