@@ -2,7 +2,10 @@ import styled from "styled-components";
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import PersonIcon from '@mui/icons-material/Person';
+import Avatar from "@mui/material/Avatar";
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 
 export const StyledNavContainer = styled.footer`
 display: flex;
@@ -48,4 +51,8 @@ color: black;
 export const StyledChatBubbleOutlineIcon = styled(ChatBubbleOutlineIcon)`
 font-size: 27px !important;
 color: black;
+`;
+
+export const StyledAvatarIcon = styled(Avatar)`
+font-size: 27px !important;
 `;

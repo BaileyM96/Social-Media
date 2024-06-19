@@ -26,6 +26,7 @@ import {
 } from "../Components/Profile/profile.styled";
 import { GET_USER_POSTS } from "../utils/query";
 import Auth from "../utils/frontEnd.auth";
+import Header from "../Components/Header/Header";
 
 
 export default function Home() {
@@ -46,9 +47,9 @@ export default function Home() {
         }
     });
 
-    useEffect(() => {
-        window.localStorage.setItem('userLikedPosts', JSON.stringify(hasLiked));
-    }, [hasLiked])
+    // useEffect(() => {
+    //     window.localStorage.setItem('userLikedPosts', JSON.stringify(hasLiked));
+    // }, [hasLiked])
 
    
 
@@ -122,7 +123,8 @@ export default function Home() {
     const sortedPosts = [...(data.friendsPosts || [] ), ...(userData.userPosts || [])].sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
       
     return (
-        <> 
+        <>
+        <Header /> 
         <StyledMainHome>
             {sortedPosts.map((posts) => (
                 <StyledPostsContainer>
