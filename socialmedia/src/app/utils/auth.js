@@ -1,6 +1,5 @@
-const { red } = require('@mui/material/colors');
 const jwt = require('jsonwebtoken');
-const { redirect } = require('next/dist/server/api-utils');
+const { NextResponse } = require('next/server');
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const expiration = '2h';
@@ -11,6 +10,9 @@ module.exports = {
 
         if (req.headers.authorization) {
             token = token.split(' ').pop().trim();
+        }
+        if (!token) {
+            return NextResponse.redirect('/login');
         }
 
         const context = {};

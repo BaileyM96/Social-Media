@@ -18,9 +18,17 @@ const passwordValidation = (password) => {
 const resolvers = {
     Query: {
       user: async (_, { email }, context) => {
-  
-        const user = await User.findOne({ email: email }).populate('sentFriendRequest');
-        return user;
+        if (!context.user) {
+          throw new AuthenticationError('You must be logged in to view this content');
+        }
+        
+        if (context.user) {
+          return  User.findOne({ email: email }).populate('sentFriendRequest');
+        }
+        
+        //THIS IS HOW I HAD IT BEFORE CONTEXT AUTHORIRZATION
+        // const user = await User.findOne({ email: email }).populate('sentFriendRequest');
+        // return user;
       },
       friendsPosts: async (_, { userId }) => {
         const user = await User.findById(userId).populate('friends');

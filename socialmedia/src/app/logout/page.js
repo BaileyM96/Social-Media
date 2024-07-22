@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { StyledCardContainer, StyledCard, StyledCardContent, StyledLogout, StyledCancel } from "./logout.styled";
 import { useRouter } from "next/navigation";
+import Auth from "../utils/frontEnd.auth";
 
 export default function Logout() {
     const [logout, setLogout] = useState(false);
@@ -11,6 +12,7 @@ export default function Logout() {
 
     const handleLogout = () => {
         setLogout(true);
+        Auth.logout();
         router.push('/login');
     }
      const handleCancel = () => {

@@ -31,7 +31,6 @@ const authService = () => {
     };
     const logout = () => {
         localStorage.removeItem('id_token');
-        window.location.reload();
     }
 
     return {
@@ -39,7 +38,8 @@ const authService = () => {
         loggedIn,
         isTokenExpired,
         getToken,
-        login
+        login,
+        logout
     }
 
 }
